@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Цены стоматологий Москвы</title>
+<style>
+:root { color-scheme: light;
+  --color-bg: #F4F6F8; --color-panel: #FFFFFF; --color-fg: #0A1628; --color-fg-muted: #4A5868;
+  --color-border-line: #D5DDE4; --color-bad: #C2410C; --color-ok: #0E6F66; --color-warn: #B45309;
+  --font-anthropic-sans: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-anthropic-serif: Georgia, "Times New Roman", serif;
+  --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 12px; --cds-gap-lg: 20px;
+  --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-lg: 16px; --cds-radius: 8px;
+  --cds-font-size-caption: 13px; --cds-font-size-body: 16px; --cds-font-size-heading: 20px; --cds-font-size-title: 30px;
+  --cds-font-weight-medium: 600; --cds-dur-slow: .3s;
+  --cds-chart-axis: #8A97A6; --cds-chart-grid: #E3E8ED; --cds-chart-muted: #C9D2DB; --cds-chart-reference: #0A1628;
+  --cds-border: #D5DDE4; --cds-surface-popover: #FFFFFF; --cds-shadow-popover: 0 4px 16px rgba(10,22,40,.15);
+  --cds-text-secondary: #4A5868; }
+@media (prefers-color-scheme: dark) { :root { color-scheme: dark;
+  --color-bg: #0B1420; --color-panel: #121E2C; --color-fg: #E6EDF3; --color-fg-muted: #9AABBC; --color-border-line: #24364A;
+  --color-bad: #F28B5B; --cds-chart-axis: #6B7A8F; --cds-chart-grid: #1C2B3C; --cds-chart-muted: #33475C; --cds-chart-reference: #E6EDF3;
+  --cds-border: #24364A; --cds-surface-popover: #121E2C; --cds-text-secondary: #9AABBC; } }
+body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); }
+#dash-root { padding: 24px 16px 48px; }
+.demo-bar { max-width: 72rem; margin: 0 auto 16px; font-size: 13px; color: var(--color-fg-muted); }
+.demo-bar a { color: inherit; }
+.dash-skeleton:empty { display: inline-block; min-width: 2em; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+window.dash = (function () {
+  var files = {"clinics": "clinics", "market": "market", "coverage": "coverage", "formats": "formats", "groups": "clinic_groups", "pairs": "pairs"}, store = {}, cbs = [], params = {};
+  var run = function () { cbs.forEach(function (f) { try { f(); } catch (e) { console.error(e); } }); };
+  Object.keys(files).forEach(function (id) {
+    store[id] = { status: 'loading', data: [], columns: [], meta: [] };
+    fetch('data/' + files[id] + '.json').then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (j) { var rows = Array.isArray(j) ? j : (j.rows || j.data || []);
+        store[id] = { status: 'ok', data: rows, rows: rows, columns: rows.length ? Object.keys(rows[0]) : [], meta: [] }; run(); })
+      .catch(function (e) { store[id] = { status: 'error', data: [], message: String(e) }; run(); });
+  });
+  window.addEventListener('resize', function () { clearTimeout(window.__dr); window.__dr = setTimeout(run, 150); });
+  return {
+    data: function (id) { return store[id] || { status: 'missing', data: [] }; },
+    onData: function (f) { cbs.push(f); try { f(); } catch (e) { console.error(e); } },
+    colors: ['#1FA89A', '#0A1628', '#D97757', '#6B7A8F', '#3CC4B5', '#B45309', '#7C3AED', '#0E6F66'],
+    params: function () { return Object.assign({}, params); },
+    setParams: function (p) { Object.assign(params, p); run(); },
+    resetParams: function () { params = {}; run(); },
+    setLink: function () {}, refresh: function () {}, calc: function () {}, loader: function () {}
+  };
+})();
+</script>
+</head><body><div id="dash-root"><p class="demo-bar"><a href="../">← все черновики</a> · черновик, данные на дату сборки базы</p>
+<style>
+/* Компоновка: одна колонка-вывод — вывод одной фразой, четыре цифры, затем карточки «клиники», «позиции Росстата», «клиника подробно», «охват». */
+.pc { display: grid; gap: var(--cds-gap-lg); font-family: var(--font-anthropic-sans); max-width: 72rem; margin-inline: auto; }
+.pc-head { display: grid; gap: var(--cds-gap-xs); }
+.pc-head h1 { margin: 0; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); text-wrap: balance; }
+.pc-take { margin: 0; font-size: var(--cds-font-size-body); max-width: 65ch; }
+.pc-note { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); max-width: 75ch; }
+.pc-kpis { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
+.pc-kpi, .pc-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+.pc-kpi { display: grid; gap: var(--cds-gap-xs); align-content: start; }
+.pc-kpi .pc-lbl { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); letter-spacing: .01em; }
+.pc-kpi .pc-big { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.pc-kpi .pc-sub { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.pc-grid { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); }
+.pc-card { display: grid; gap: var(--cds-gap-sm); align-content: start; }
+.pc-card h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+.pc-card .pc-cap { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.pc-chart { position: relative; min-height: 14rem; }
+.pc-chart svg { display: block; }
+.pc-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); max-width: 18rem; z-index: 2; }
+.pc-tip .pc-tip-h { color: var(--cds-text-secondary); }
+.pc-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.pc-legend span { display: inline-flex; align-items: center; gap: var(--cds-gap-xs); }
+.pc-sw { width: .625rem; height: .625rem; border-radius: 50%; display: inline-block; }
+.pc-out { margin: 0; padding-left: 1.1rem; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); display: grid; gap: var(--cds-gap-xs); }
+.pc-pick { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
+.pc-pick select { font: inherit; padding: var(--cds-pad-xs) var(--cds-pad-sm); border-radius: var(--cds-radius); border: 1px solid var(--color-border-line); background: var(--color-bg); color: var(--color-fg); max-width: 100%; }
+.pc-mini { display: grid; gap: var(--cds-gap-sm); grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); }
+.pc-mini div { display: grid; gap: 2px; }
+.pc-mini .pc-lbl { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.pc-mini .pc-val { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-heading); font-variant-numeric: tabular-nums; }
+.pc-tbl-wrap { overflow: auto; max-height: 26rem; }
+.pc-tbl { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.pc-tbl th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); }
+.pc-tbl td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+.pc-tbl td.n, .pc-tbl th.n { text-align: right; white-space: nowrap; }
+.pc-tbl a { color: inherit; }
+.pc-up { color: var(--color-bad); }
+.pc-flat { color: var(--color-fg-muted); }
+.pc-funnel { display: grid; gap: var(--cds-gap-sm); }
+.pc-frow { display: grid; grid-template-columns: minmax(0, 1fr) 3rem; gap: var(--cds-gap-sm); align-items: center; font-size: var(--cds-font-size-caption); }
+.pc-fbar { height: .75rem; border-radius: 4px; background: var(--cds-chart-muted); }
+.pc-fbar.pc-acc { background: var(--pc-acc); }
+.pc-flbl { grid-column: 1 / -1; color: var(--color-fg-muted); }
+.pc-chips { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
+.pc-chip { font-size: var(--cds-font-size-caption); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 2px var(--cds-pad-sm); }
+[data-dash-source-state=empty] { color: transparent; }
+[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+.pc-fail { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-xs); color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); min-height: 6rem; }
+.pc-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+</style>
+
+<div class="pc">
+  <header class="pc-head" id="top">
+    <h1>Цены стоматологий Москвы</h1>
+    <p class="pc-take" id="takeaway">За год опубликованные цены клиник выросли на <b class="dash-skeleton" data-fill data-source="market" data-field="median" data-where="metric=idx_w" data-fmt="pct">—</b>: это медиана по <span class="dash-skeleton" data-fill data-source="market" data-field="clinics" data-where="metric=idx_w" data-fmt="int">—</span> клиникам, веса Росстата по Москве. Росстат по Москве за тот же год: <b class="dash-skeleton" data-fill data-source="market" data-field="rosstat_msk" data-where="metric=idx_w" data-fmt="pct">—</b>.</p>
+    <p class="pc-note">Розничные цены из прейскурантов, которые клиники публикуют на своих сайтах. Клиники — стоматологии Москвы из реестров ФНС и Минздрава и из перечней ЛПУ конкурсов ДМС; рост за год считается по клиникам, у которых есть прошлогодний прайс, и только по тождественным строкам (тот же код и то же наименование). Год назад — снимок веб-архива за сентябрь–ноябрь 2025, сейчас — прайс на сайте в октябре 2026. Договорные цены страховщиков здесь не измеряются. Прайс, где за год не изменилась ни одна строка, в медиану не идёт: клиника могла не обновить сайт. Клиник с прошлогодним прайсом пока немного, поэтому расхождение с Росстатом ещё разбираем: у многопрофильных клиник за год изменилась лишь часть стоматологических строк.</p>
+  </header>
+
+  <section class="pc-kpis" id="headline" aria-label="Главные цифры">
+    <div class="pc-kpi"><span class="pc-lbl">Рост цен клиник за год</span><span class="pc-big dash-skeleton" data-fill data-source="market" data-field="median" data-where="metric=idx_w" data-fmt="pct">—</span><span class="pc-sub">медиана, веса Росстата по Москве</span></div>
+    <div class="pc-kpi"><span class="pc-lbl">Росстат, Москва</span><span class="pc-big dash-skeleton" data-fill data-source="market" data-field="rosstat_msk" data-where="metric=idx_w" data-fmt="pct">—</span><span class="pc-sub">средние цены, сентябрь 2026 к сентябрю 2025</span></div>
+    <div class="pc-kpi"><span class="pc-lbl">Услуги, что обычно входят в ДМС</span><span class="pc-big dash-skeleton" data-fill data-source="market" data-field="median" data-where="metric=idx_dms" data-fmt="pct">—</span><span class="pc-sub">пломба, удаление, осмотр; Росстат <span data-fill data-source="market" data-field="rosstat_msk" data-where="metric=idx_dms" data-fmt="pct">—</span></span></div>
+    <div class="pc-kpi"><span class="pc-lbl">Клиник в базе</span><span class="pc-big dash-skeleton" data-fill data-source="coverage" data-field="clinics" data-where="step=s1" data-fmt="int">—</span><span class="pc-sub">прайс скачан у <span data-fill data-source="coverage" data-field="clinics" data-where="step=s3" data-fmt="int">—</span>, прошлогодний есть у <span data-fill data-source="coverage" data-field="clinics" data-where="step=s4" data-fmt="int">—</span></span></div>
+  </section>
+
+  <div class="pc-grid">
+    <section class="pc-card" id="by-clinic">
+      <h2>Рост цен по клиникам</h2>
+      <p class="pc-cap">Индекс клиники с весами Росстата по Москве по тем позициям, что есть в её прайсе. Линии — медиана рынка и Росстат.</p>
+      <div class="pc-legend"><span><i class="pc-sw" data-sw="acc"></i>клиника</span><span><i class="pc-sw" data-sw="ref"></i>Росстат, Москва</span><span><i class="pc-sw" data-sw="med"></i>медиана клиник</span></div>
+      <div class="pc-chart dash-skeleton" id="clinic-chart" data-source="clinics market"></div>
+      <p class="pc-cap">Не идут в медиану:</p>
+      <ul class="pc-out" id="excluded" data-source="clinics"></ul>
+    </section>
+
+    <section class="pc-card" id="by-position">
+      <h2>Позиции Росстата и подындексы</h2>
+      <p class="pc-cap">Медиана роста по клиникам (точка) и разброс от минимума до максимума; ромб — Росстат по Москве. У имплантации и ортодонтии позиций Росстата нет.</p>
+      <div class="pc-legend"><span><i class="pc-sw" data-sw="acc"></i>медиана клиник</span><span><i class="pc-sw" data-sw="ref"></i>Росстат, Москва</span></div>
+      <div class="pc-chart dash-skeleton" id="position-chart" data-source="market"></div>
+    </section>
+  </div>
+
+  <section class="pc-card" id="clinic">
+    <h2>Клиника подробно</h2>
+    <div class="pc-pick"><label for="pc-clinic" class="pc-cap">Клиника</label><select id="pc-clinic" data-source="clinics"></select></div>
+    <div class="pc-mini" id="clinic-mini">
+      <div><span class="pc-lbl">Индекс, веса Москвы</span><span class="pc-val" data-fill data-source="clinics" data-field="idx_w" data-fmt="pct" data-clinic>—</span></div>
+      <div><span class="pc-lbl">Услуги ДМС</span><span class="pc-val" data-fill data-source="clinics" data-field="idx_dms" data-fmt="pct" data-clinic>—</span></div>
+      <div><span class="pc-lbl">Все строки, медиана</span><span class="pc-val" data-fill data-source="clinics" data-field="all_lines" data-fmt="pct" data-clinic>—</span></div>
+      <div><span class="pc-lbl">Строк изменилось</span><span class="pc-val" data-fill data-source="clinics" data-field="share_changed" data-fmt="share" data-clinic>—</span></div>
+      <div><span class="pc-lbl">Пар строк</span><span class="pc-val" data-fill data-source="clinics" data-field="pairs" data-fmt="int" data-clinic>—</span></div>
+    </div>
+    <p class="pc-cap" id="clinic-dates">Снимки: <span data-fill data-source="clinics" data-field="snapshot_old" data-fmt="date" data-clinic>—</span> и <span data-fill data-source="clinics" data-field="snapshot_new" data-fmt="date" data-clinic>—</span>.</p>
+    <div class="pc-grid">
+      <div class="pc-tbl-wrap">
+        <table class="pc-tbl" id="groups-table" data-source="groups" data-row-key="key">
+          <thead><tr><th data-field="group">Группа услуг</th><th data-field="usually_dms">Обычно в ДМС</th><th class="n" data-field="pairs">Пар</th><th class="n" data-field="median_change">Рост, медиана</th><th class="n" data-field="share_changed">Изменилось</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="pc-tbl-wrap">
+        <table class="pc-tbl" id="pairs-table" data-source="pairs" data-row-key="pair_id">
+          <thead><tr><th data-field="name_new">Строка прайса</th><th class="n" data-field="price_old">Год назад, ₽</th><th class="n" data-field="price_new">Сейчас, ₽</th><th class="n" data-field="change">Рост</th><th data-field="doc_new">Прайс</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <p class="pc-cap" id="pairs-note">Показаны 40 строк с самым большим ростом. Все пары строк с обеими ценами, датами и ссылками — в источнике «Пары строк».</p>
+  </section>
+
+  <section class="pc-card" id="coverage">
+    <h2>Охват базы</h2>
+    <p class="pc-cap">От перечней ЛПУ конкурсов до клиник, которые идут в медиану рынка.</p>
+    <div class="pc-funnel" id="funnel" data-source="coverage"></div>
+    <p class="pc-cap">В каком виде прайс:</p>
+    <div class="pc-chips" id="formats" data-source="formats"></div>
+  </section>
+</div>
+
+<script>
+(function () {
+  const fmtNum = (v, f) => {
+    if (v === '' || v === null || v === undefined) return '—';
+    if (f === 'pct') { const s = d3.format('+.1%')(+v); return (+v === 0 ? '0,0%' : s).replace('.', ',').replace('-', '−'); }
+    if (f === 'share') return d3.format('.0%')(+v);
+    if (f === 'int') return d3.format(',')(+v).replace(/,/g, ' ');
+    if (f === 'rub') return new Intl.NumberFormat('ru-RU').format(+v);
+    if (f === 'date') { const p = String(v).split('-'); return p.length === 3 ? `${p[2]}.${p[1]}.${p[0]}` : String(v); }
+    return String(v);
+  };
+  window.pcFmt = fmtNum;
+  const rowsOf = (id) => { const d = dash.data(id); return d.status === 'ok' && Array.isArray(d.data) ? d.data : null; };
+  const matchWhere = (row, where) => where.split('&').every((kv) => { const [k, v] = kv.split('=').map(decodeURIComponent); return String(row[k]) === v; });
+
+  const sel = document.getElementById('pc-clinic');
+  sel.addEventListener('change', () => dash.setParams({ clinic: sel.value }));
+
+  const accent = () => dash.colors[0];
+  document.querySelectorAll('[data-sw]').forEach((el) => {
+    const k = el.dataset.sw;
+    el.style.background = k === 'acc' ? accent() : k === 'ref' ? 'var(--cds-chart-reference)' : 'var(--color-fg-muted)';
+  });
+  document.querySelector('.pc').style.setProperty('--pc-acc', accent());
+
+  function tipFor(box) {
+    let t = box.querySelector('.pc-tip');
+    if (!t) { t = document.createElement('div'); t.className = 'pc-tip'; t.hidden = true; box.appendChild(t); }
+    return t;
+  }
+  function showTip(box, t, event, lines) {
+    t.replaceChildren(...lines.map((l, i) => { const d = document.createElement('div'); if (i === 0) d.className = 'pc-tip-h'; d.textContent = l; return d; }));
+    t.hidden = false;
+    const r = box.getBoundingClientRect();
+    let x = event.clientX - r.left + 12, y = event.clientY - r.top + 12;
+    const w = t.offsetWidth, h = t.offsetHeight;
+    if (x + w > r.width) x = Math.max(0, event.clientX - r.left - w - 12);
+    if (y + h > r.height) y = Math.max(0, event.clientY - r.top - h - 12);
+    t.style.left = x + 'px'; t.style.top = y + 'px';
+  }
+  function failed(box) { box.classList.remove('dash-skeleton'); box.replaceChildren(); const f = document.createElement('div'); f.className = 'pc-fail'; f.textContent = 'Failed to load'; box.appendChild(f); }
+
+  function fillMarks(clinic) {
+    document.querySelectorAll('[data-fill]').forEach((el) => {
+      const id = el.dataset.source; const d = dash.data(id);
+      if (el.hasAttribute('data-clinic')) el.setAttribute('data-where', 'org_key=' + encodeURIComponent(clinic || ''));
+      const rows = rowsOf(id);
+      if (!rows) { if (d.status === 'error') el.classList.remove('dash-skeleton'); return; }
+      el.classList.remove('dash-skeleton');
+      const row = rows.find((r) => matchWhere(r, el.getAttribute('data-where') || ''));
+      el.textContent = row ? fmtNum(row[el.dataset.field], el.dataset.fmt) : '—';
+    });
+  }
+
+  function measure(svg, texts) {
+    const g = svg.append('g').attr('visibility', 'hidden');
+    const w = d3.max(texts, (s) => { const t = g.append('text').attr('font-size', 12).text(s); const v = t.node().getComputedTextLength(); return v; }) || 0;
+    g.remove(); return w;
+  }
+
+  function drawClinics(box, clinics, market) {
+    box.classList.remove('dash-skeleton');
+    const rows = clinics.filter((c) => c.in_market === 'да' && c.idx_w !== '').sort((a, b) => b.idx_w - a.idx_w);
+    const m = market.find((r) => r.metric === 'idx_w') || {};
+    const width = Math.max(280, box.clientWidth);
+    const bh = 22, gap = 10, top = 28, bottom = 26;
+    const height = top + rows.length * (bh + gap) + bottom;
+    box.replaceChildren(); box.style.minHeight = height + 'px';
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('role', 'img').attr('aria-label', 'Рост цен по клиникам');
+    const left = Math.min(width * 0.45, measure(svg, rows.map((r) => r.clinic)) + 12);
+    const right = 48;
+    const maxV = d3.max([...rows.map((r) => +r.idx_w), +m.rosstat_msk || 0, +m.median || 0]) || 0.1;
+    const minV = Math.min(0, d3.min(rows, (r) => +r.idx_w) || 0);
+    const x = d3.scaleLinear([minV, maxV * 1.08], [left, width - right]);
+    const y = (i) => top + i * (bh + gap);
+    const ticks = x.ticks(Math.max(2, Math.floor((width - left - right) / 90)));
+    svg.append('g').selectAll('line').data(ticks).join('line').attr('x1', x).attr('x2', x).attr('y1', top - 6).attr('y2', height - bottom).attr('stroke', 'var(--cds-chart-grid)').attr('stroke-width', 1);
+    svg.append('g').selectAll('text').data(ticks).join('text').attr('x', x).attr('y', height - 8).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text((t) => fmtNum(t, 'pct').replace(',0%', '%'));
+    svg.append('g').selectAll('text').data(rows).join('text').attr('x', left - 8).attr('y', (d, i) => y(i) + bh / 2 + 4).attr('text-anchor', 'end').attr('font-size', 12).attr('fill', 'var(--color-fg)').text((d) => d.clinic);
+    svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', (d) => Math.min(x(0), x(+d.idx_w))).attr('y', (d, i) => y(i)).attr('height', bh).attr('width', (d) => Math.max(2, Math.abs(x(+d.idx_w) - x(0)))).attr('rx', 4).attr('fill', accent());
+    svg.append('g').selectAll('text').data(rows).join('text').attr('x', (d) => x(+d.idx_w) + 6).attr('y', (d, i) => y(i) + bh / 2 + 4).attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text((d) => fmtNum(d.idx_w, 'pct'));
+    const refs = [];
+    if (m.rosstat_msk !== '' && m.rosstat_msk !== undefined) refs.push({ v: +m.rosstat_msk, label: 'Росстат ' + fmtNum(m.rosstat_msk, 'pct'), color: 'var(--cds-chart-reference)', dash: '4 3' });
+    if (m.median !== '' && m.median !== undefined) refs.push({ v: +m.median, label: 'медиана ' + fmtNum(m.median, 'pct'), color: 'var(--color-fg-muted)', dash: '1 3' });
+    refs.sort((a, b) => a.v - b.v);
+    refs.forEach((r, i) => {
+      svg.append('line').attr('x1', x(r.v)).attr('x2', x(r.v)).attr('y1', top - 4).attr('y2', height - bottom).attr('stroke', r.color).attr('stroke-width', 1.5).attr('stroke-dasharray', r.dash);
+      svg.append('text').attr('x', x(r.v)).attr('y', 11 + i * 12).attr('text-anchor', i === 0 ? 'end' : 'start').attr('dx', i === 0 ? -3 : 3).attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text(r.label);
+    });
+    const tip = tipFor(box);
+    svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', 0).attr('width', width).attr('y', (d, i) => y(i) - gap / 2).attr('height', bh + gap).attr('fill', 'transparent')
+      .on('mousemove', (event, d) => showTip(box, tip, event, [d.clinic, 'индекс ' + fmtNum(d.idx_w, 'pct') + ' (позиций Росстата: ' + d.idx_w_positions + ')', 'услуги ДМС ' + fmtNum(d.idx_dms, 'pct'), 'пар строк ' + d.pairs + ', снимки ' + fmtNum(d.snapshot_old, 'date') + ' и ' + fmtNum(d.snapshot_new, 'date')]))
+      .on('mouseleave', () => { tip.hidden = true; })
+      .on('click', (event, d) => dash.setParams({ clinic: d.org_key }));
+  }
+
+  function drawPositions(box, market) {
+    box.classList.remove('dash-skeleton');
+    const order = ['idx_w', 'idx_dms', 'pos_crown', 'pos_filling', 'pos_denture', 'pos_extraction', 'pos_exam', 'sub_implants', 'sub_ortho', 'all_lines'];
+    const rows = order.map((k) => market.find((r) => r.metric === k)).filter(Boolean);
+    const width = Math.max(280, box.clientWidth);
+    const rh = 30, top = 8, bottom = 26;
+    const height = top + rows.length * rh + bottom;
+    box.replaceChildren(); box.style.minHeight = height + 'px';
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('role', 'img').attr('aria-label', 'Позиции Росстата и подындексы');
+    const lab = (r) => r.label + (r.clinics !== '' ? ' · ' + r.clinics : '');
+    const left = Math.min(width * 0.5, measure(svg, rows.map(lab)) + 12);
+    const right = 16;
+    const vals = rows.flatMap((r) => [r.min, r.max, r.median, r.rosstat_msk]).filter((v) => v !== '' && v !== undefined).map(Number);
+    const x = d3.scaleLinear([Math.min(0, d3.min(vals) || 0), (d3.max(vals) || 0.1) * 1.05], [left, width - right]);
+    const y = (i) => top + i * rh + rh / 2;
+    const ticks = x.ticks(Math.max(2, Math.floor((width - left - right) / 90)));
+    svg.append('g').selectAll('line').data(ticks).join('line').attr('x1', x).attr('x2', x).attr('y1', top).attr('y2', height - bottom).attr('stroke', 'var(--cds-chart-grid)');
+    svg.append('g').selectAll('text').data(ticks).join('text').attr('x', x).attr('y', height - 8).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text((t) => fmtNum(t, 'pct').replace(',0%', '%'));
+    svg.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', top).attr('y2', height - bottom).attr('stroke', 'var(--cds-chart-axis)');
+    svg.append('g').selectAll('text').data(rows).join('text').attr('x', left - 8).attr('y', (d, i) => y(i) + 4).attr('text-anchor', 'end').attr('font-size', 12).attr('fill', 'var(--color-fg)').text(lab);
+    rows.forEach((r, i) => {
+      if (r.min !== '' && r.max !== '') svg.append('line').attr('x1', x(+r.min)).attr('x2', x(+r.max)).attr('y1', y(i)).attr('y2', y(i)).attr('stroke', accent()).attr('stroke-opacity', 0.35).attr('stroke-width', 2).attr('stroke-linecap', 'round');
+      if (r.rosstat_msk !== '') svg.append('path').attr('d', d3.symbol(d3.symbolDiamond, 70)()).attr('transform', `translate(${x(+r.rosstat_msk)},${y(i)})`).attr('fill', 'var(--color-panel)').attr('stroke', 'var(--cds-chart-reference)').attr('stroke-width', 2);
+      if (r.median !== '') svg.append('circle').attr('cx', x(+r.median)).attr('cy', y(i)).attr('r', 5).attr('fill', accent()).attr('stroke', 'var(--color-panel)').attr('stroke-width', 2);
+    });
+    const tip = tipFor(box);
+    svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', 0).attr('width', width).attr('y', (d, i) => y(i) - rh / 2).attr('height', rh).attr('fill', 'transparent')
+      .on('mousemove', (event, d) => showTip(box, tip, event, [d.label, 'медиана клиник ' + fmtNum(d.median, 'pct') + (d.clinics !== '' ? ' (' + d.clinics + ')' : ''), 'от ' + fmtNum(d.min, 'pct') + ' до ' + fmtNum(d.max, 'pct'), 'Росстат, Москва ' + fmtNum(d.rosstat_msk, 'pct')]))
+      .on('mouseleave', () => { tip.hidden = true; });
+  }
+
+  function drawClinicDetail(clinic, groups, pairs) {
+    const gt = d3.select('#groups-table tbody');
+    const gr = (groups || []).filter((g) => g.org_key === clinic).sort((a, b) => b.pairs - a.pairs);
+    gt.selectAll('tr').data(gr, (d) => d.key).join('tr').attr('data-key', (d) => d.key).each(function (d) {
+      const tds = [d.group, d.usually_dms, fmtNum(d.pairs, 'int'), fmtNum(d.median_change, 'pct'), fmtNum(d.share_changed, 'share')];
+      const cls = (v, i) => [i >= 2 ? 'n' : '', i === 3 ? (+d.median_change > 0.001 ? 'pc-up' : 'pc-flat') : ''].filter(Boolean).join(' ') || null;
+      d3.select(this).selectAll('td').data(tds).join('td').attr('class', cls).text((v) => v);
+    });
+    const pt = d3.select('#pairs-table tbody');
+    const pr = (pairs || []).filter((p) => p.org_key === clinic).sort((a, b) => Math.abs(b.change) - Math.abs(a.change)).slice(0, 40);
+    pt.selectAll('tr').data(pr, (d) => d.pair_id).join('tr').attr('data-key', (d) => d.pair_id).each(function (d) {
+      const tr = d3.select(this); tr.selectAll('td').remove();
+      tr.append('td').text(d.name_new);
+      tr.append('td').attr('class', 'n').text(fmtNum(d.price_old, 'rub'));
+      tr.append('td').attr('class', 'n').text(fmtNum(d.price_new, 'rub'));
+      tr.append('td').attr('class', 'n' + (+d.change > 0.001 ? ' pc-up' : ' pc-flat')).text(fmtNum(d.change, 'pct'));
+      const a = tr.append('td').append('a').attr('href', d.doc_new).attr('target', '_blank').attr('rel', 'noopener');
+      a.text(fmtNum(d.snapshot_new, 'date'));
+    });
+  }
+
+  function drawCoverage(box, cov, formats) {
+    box.classList.remove('dash-skeleton');
+    const max = d3.max(cov, (c) => +c.clinics) || 1;
+    const f = d3.select(box);
+    f.selectAll('.pc-frow').data(cov, (d) => d.step).join((enter) => {
+      const row = enter.append('div').attr('class', 'pc-frow');
+      row.append('span').attr('class', 'pc-flbl');
+      row.append('div').attr('class', 'pc-fbar');
+      row.append('span').attr('class', 'pc-fnum');
+      return row;
+    }).each(function (d, i) {
+      const row = d3.select(this);
+      row.select('.pc-flbl').text(d.label);
+      row.select('.pc-fbar').classed('pc-acc', i === cov.length - 1).style('width', (100 * d.clinics / max) + '%');
+      row.select('.pc-fnum').text(fmtNum(d.clinics, 'int'));
+    });
+    d3.select('#formats').selectAll('.pc-chip').data(formats || [], (d) => d.format).join('span').attr('class', 'pc-chip').text((d) => d.format + ': ' + d.clinics);
+  }
+
+  let drawnOnce = false;
+  dash.onData(() => {
+    const clinics = rowsOf('clinics'), market = rowsOf('market');
+    let clinic = dash.params().clinic;
+    if (clinics) {
+      const opts = clinics.slice().sort((a, b) => a.clinic.localeCompare(b.clinic, 'ru'));
+      if (!clinic || !clinics.some((c) => c.org_key === clinic)) clinic = (clinics.find((c) => c.in_market === 'да') || clinics[0] || {}).org_key;
+      sel.replaceChildren(...opts.map((c) => new Option(c.clinic + (c.in_market === 'да' ? '' : ' (вне медианы)'), c.org_key)));
+      sel.value = clinic || '';
+    }
+    fillMarks(clinic);
+    const cbox = document.getElementById('clinic-chart');
+    if (clinics && market) drawClinics(cbox, clinics, market); else if (dash.data('clinics').status === 'error' || dash.data('market').status === 'error') failed(cbox);
+    const ex = d3.select('#excluded');
+    ex.selectAll('li').data(clinics ? clinics.filter((c) => c.in_market !== 'да') : [], (d) => d.org_key).join('li').text((d) => d.clinic + ': ' + d.why_not);
+    const pbox = document.getElementById('position-chart');
+    if (market) drawPositions(pbox, market); else if (dash.data('market').status === 'error') failed(pbox);
+    if (clinic) drawClinicDetail(clinic, rowsOf('groups'), rowsOf('pairs'));
+    const cov = rowsOf('coverage');
+    const fbox = document.getElementById('funnel');
+    if (cov) drawCoverage(fbox, cov, rowsOf('formats')); else if (dash.data('coverage').status === 'error') failed(fbox);
+    if (!drawnOnce && clinics && market) {
+      drawnOnce = true;
+      const named = document.getElementById(location.hash.slice(1));
+      if (named) { named.scrollIntoView(); dash.setLink(named.id); }
+    }
+  });
+})();
+</script>
+
+</div></body></html>

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Цены клиник: черновики</title>
+<style>
+:root { color-scheme: light;
+  --color-bg: #F4F6F8; --color-panel: #FFFFFF; --color-fg: #0A1628; --color-fg-muted: #4A5868;
+  --color-border-line: #D5DDE4; --color-bad: #C2410C; --color-ok: #0E6F66; --color-warn: #B45309;
+  --font-anthropic-sans: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-anthropic-serif: Georgia, "Times New Roman", serif;
+  --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 12px; --cds-gap-lg: 20px;
+  --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-lg: 16px; --cds-radius: 8px;
+  --cds-font-size-caption: 13px; --cds-font-size-body: 16px; --cds-font-size-heading: 20px; --cds-font-size-title: 30px;
+  --cds-font-weight-medium: 600; --cds-dur-slow: .3s;
+  --cds-chart-axis: #8A97A6; --cds-chart-grid: #E3E8ED; --cds-chart-muted: #C9D2DB; --cds-chart-reference: #0A1628;
+  --cds-border: #D5DDE4; --cds-surface-popover: #FFFFFF; --cds-shadow-popover: 0 4px 16px rgba(10,22,40,.15);
+  --cds-text-secondary: #4A5868; }
+@media (prefers-color-scheme: dark) { :root { color-scheme: dark;
+  --color-bg: #0B1420; --color-panel: #121E2C; --color-fg: #E6EDF3; --color-fg-muted: #9AABBC; --color-border-line: #24364A;
+  --color-bad: #F28B5B; --cds-chart-axis: #6B7A8F; --cds-chart-grid: #1C2B3C; --cds-chart-muted: #33475C; --cds-chart-reference: #E6EDF3;
+  --cds-border: #24364A; --cds-surface-popover: #121E2C; --cds-text-secondary: #9AABBC; } }
+body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); }
+#dash-root { padding: 24px 16px 48px; }
+.demo-bar { max-width: 72rem; margin: 0 auto 16px; font-size: 13px; color: var(--color-fg-muted); }
+.demo-bar a { color: inherit; }
+.dash-skeleton:empty { display: inline-block; min-width: 2em; }
+
+.wrap { max-width: 760px; margin: 0 auto; padding: 32px 16px 48px; line-height: 1.55; }
+h1 { font-size: 28px; margin: 0 0 8px; } .lead { color: var(--color-fg-muted); margin: 0 0 24px; }
+.card { display: block; background: var(--color-panel); border: 1px solid var(--color-border-line); border-left: 4px solid #1FA89A;
+  border-radius: 8px; padding: 16px 18px; margin: 12px 0; color: inherit; text-decoration: none; }
+.card:hover { border-color: #1FA89A; } .card b { font-size: 18px; } .card span { display: block; color: var(--color-fg-muted); font-size: 14px; margin-top: 4px; }
+.foot { color: var(--color-fg-muted); font-size: 13px; margin-top: 24px; }
+</style></head><body><div class="wrap">
+<h1>Цены клиник: черновики</h1>
+<p class="lead">Агрегатор публичных цен медицинских услуг, начали со стоматологии Москвы. Страницы — рабочие черновики, данные и вид будут меняться.</p>
+<a class="card" href="dashboard/"><b>Рост цен стоматологий Москвы за год</b>
+<span>Как клиники изменили свои публичные цены, рынок против Росстата с весами услуг, одна клиника подробно. Реальные данные из прайсов на сайтах клиник.</span></a>
+<a class="card" href="kontur/"><b>Разбор условий клиники</b>
+<span>Вариант рабочего места аналитика: старый и новый прайс одной клиники, сопоставимые услуги, неценовые условия, вопросы клинике. Все данные вымышлены.</span></a>
+<p class="foot">Розничные цены из опубликованных прейскурантов клиник. Договорные цены страховщиков здесь не собираются и не показываются.</p>
+</div></body></html>

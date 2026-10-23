@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>Контур · Разбор условий клиники</title><style>
+:root{--ink:#182f34;--muted:#697c80;--line:#e0e8e7;--bg:#f4f7f6;--teal:#087e76;--teal-dark:#07594f;--soft:#eaf6f1;--amber:#a66b16;--amber-bg:#fff4df;--red:#bb5140;--red-bg:#fdf0ec;--nav:#123e37;--radius:16px}
+*{box-sizing:border-box}body{margin:0;font:14px/1.55 "Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--bg)}button,input,select,textarea{font:inherit}button,a,input,textarea{outline-offset:4px}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.48}a{color:var(--teal)}button{border:0}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #58bfb5}svg{width:20px;height:20px;flex:none}h1,h2,h3,p{margin:0}h1{font-size:32px;line-height:1.2;font-weight:650;letter-spacing:-.6px}h2{font-size:19px;font-weight:650}h3{font-size:15px}small,.small{font-size:12px}.muted{color:var(--muted)}.app{min-height:100vh;display:grid;grid-template-columns:235px minmax(0,1fr)}.sidebar{background:var(--nav);color:#fff;padding:31px 22px;display:flex;flex-direction:column;gap:28px;position:sticky;top:0;height:100vh}.brand{display:flex;align-items:center;gap:11px;font-size:23px;font-weight:650;letter-spacing:-.4px}.brand-mark{width:38px;height:38px;background:#2e7462;border-radius:12px;display:grid;place-items:center}.brand-mark svg{width:25px;height:25px}.brand-sub{font-size:11px;color:#a2bdb5;letter-spacing:1.3px;margin:5px 0 0 49px}.side-label{font-size:10px;letter-spacing:1.5px;color:#9bbab1;margin-bottom:12px}.step-nav{display:flex;flex-direction:column;gap:7px}.step{width:100%;text-align:left;display:flex;align-items:center;gap:11px;border-radius:9px;padding:12px 11px;background:none;color:#c5d8d2}.step.active{background:#2b5b50;color:white}.step-number{border:1px solid #698b7f;border-radius:50%;width:24px;height:24px;font-size:12px;display:grid;place-items:center;flex:none}.step.active .step-number{background:#b9e4cc;color:var(--nav);border-color:#b9e4cc}.side-case{border-top:1px solid #3b6055;padding-top:23px;margin-top:1px}.side-case strong{font-size:13px;display:block;margin-bottom:5px}.side-case p{font-size:12px;color:#afc8bf}.side-bottom{margin-top:auto;font-size:11px;color:#a9c5bb}.side-bottom span{display:block;margin-top:10px}.main{min-width:0}.topbar{height:77px;background:#fff;border-bottom:1px solid var(--line);padding:0 38px;display:flex;align-items:center;justify-content:space-between;gap:16px}.breadcrumb{font-size:12px;color:var(--muted)}.breadcrumb b{color:var(--ink);font-weight:500}.top-actions{display:flex;gap:12px;align-items:center}.local-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border:1px solid var(--line);border-radius:20px;font-size:11px;color:var(--muted)}.dot{width:6px;height:6px;background:#4eaa81;border-radius:50%;display:inline-block}.avatar{height:31px;width:31px;border-radius:50%;background:#e7efe9;color:#53776b;display:grid;place-items:center;font-size:11px;font-weight:650}.content{max-width:1420px;padding:34px 38px 38px;margin:0 auto}.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:24px}.eyebrow{font-size:10px;font-weight:700;letter-spacing:1.3px;color:var(--teal);margin-bottom:11px}.lead{font-size:14px;color:var(--muted);margin-top:10px;max-width:720px}.pill{display:inline-flex;align-items:center;gap:6px;background:#eef2f1;border:1px solid #e1e8e5;color:#61736b;border-radius:6px;padding:4px 8px;font-size:11px;white-space:nowrap}.pill.green{background:var(--soft);border-color:#cce9dc;color:#216e56}.pill.amber{background:var(--amber-bg);border-color:#f4deb5;color:var(--amber)}.pill.red{background:var(--red-bg);color:var(--red);border-color:#f3d6cc}.notice{display:flex;gap:10px;border:1px solid #e6e1cd;background:#fbf8ee;color:#7e7454;padding:12px 15px;border-radius:10px;font-size:12px;margin-bottom:22px}.notice svg{width:17px;height:17px;margin-top:1px}.notice.teal{background:#eaf5f0;border-color:#cfe4d8;color:#3c6b5b}.notice.danger{background:var(--red-bg);color:#9e493b;border-color:#f1cec4}.card{background:white;border:1px solid var(--line);border-radius:var(--radius);padding:23px}.card+.card{margin-top:20px}.card-head{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:20px}.card-head p{font-size:12px;color:var(--muted);margin-top:4px}.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.setup-grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(240px,1fr);gap:21px}.stack{display:flex;flex-direction:column;gap:20px}.stack .card+.card{margin:0}.field label,.field-label{font-size:12px;color:#526b6c;display:block;margin-bottom:7px}.field input,.field textarea,.field select,textarea{width:100%;border:1px solid #d7e2de;border-radius:8px;padding:10px 12px;background:white;color:var(--ink);min-height:42px}.field input[readonly]{background:#f7faf8;color:#5e7770}.field small{display:block;color:var(--muted);margin-top:6px;font-size:11px}.field input[aria-invalid=true]{border-color:var(--red);background:#fff9f7}.field .error{color:var(--red)}.field-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field-pair+.field-pair{margin-top:16px}.source{border:1px solid var(--line);border-radius:11px;overflow:hidden}.source-top{padding:15px;display:flex;gap:11px;align-items:center;background:#fbfcfb;border-bottom:1px solid var(--line)}.file-icon{width:34px;height:39px;border-radius:7px;display:grid;place-items:center;background:#e8f1ea;color:#5d8974;flex:none}.source-top strong{display:block;font-size:13px}.source-top span{font-size:11px;color:var(--muted)}.source-body{padding:16px}.source-row{display:flex;justify-content:space-between;gap:10px;font-size:12px;margin-bottom:8px}.source-row span:first-child{color:var(--muted)}.source .btn{margin-top:7px;width:100%}.btn{display:inline-flex;justify-content:center;align-items:center;gap:7px;min-height:38px;padding:9px 14px;border-radius:8px;background:white;border:1px solid #d7e2dd;color:var(--ink);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap}.btn:hover{background:#f1f7f4}.btn.primary{background:var(--teal);border-color:var(--teal);color:white}.btn.primary:hover{background:var(--teal-dark)}.btn.soft{background:var(--soft);color:var(--teal);border-color:#d8ebe0}.btn.quiet{background:transparent;border-color:transparent;color:var(--muted)}.btn.danger{color:var(--red);border-color:#eacdc6;background:#fff}.btn.small-btn{min-height:30px;padding:5px 9px;font-size:11px}.btn svg{width:16px;height:16px}.criteria{display:flex;gap:11px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #edf1ef}.criteria:last-child{border-bottom:0}.check-icon{width:23px;height:23px;display:grid;place-items:center;background:var(--soft);color:#378869;border-radius:6px;flex:none}.check-icon svg{width:14px;height:14px}.criteria strong{font-size:12px;display:block}.criteria p{font-size:11px;color:var(--muted);margin-top:3px}.task-code{font-size:11px;color:var(--muted)}.divider{height:1px;background:var(--line);margin:18px 0}.footer-actions{margin-top:23px;display:flex;justify-content:space-between;align-items:center;gap:15px}.saved-note{font-size:11px;color:var(--muted);max-width:450px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:21px}.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px 20px}.stat-label{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:7px}.stat-label svg{width:15px;height:15px}.stat-value{font-size:28px;line-height:1.2;margin:9px 0 5px;font-weight:650;letter-spacing:-.7px}.stat-note{font-size:11px;color:var(--muted)}.table-card{padding:0;overflow:hidden}.table-toolbar{display:flex;justify-content:space-between;gap:12px;padding:20px 22px;align-items:center}.filters{display:flex;gap:5px;flex-wrap:wrap}.filter{padding:6px 10px;background:none;color:var(--muted);font-size:11px;border:1px solid transparent;border-radius:6px}.filter.active{background:#eef5f1;color:#1e6a52;border-color:#dbe9e0}.table-scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;text-align:left;font-size:12px}th{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#778c8a;background:#f8faf9;padding:13px 15px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-weight:600}td{padding:17px 15px;border-bottom:1px solid #edf1ee;vertical-align:top}tr:last-child td{border-bottom:0}.service-name{font-weight:650;font-size:12px;margin-bottom:4px}.service-unit{font-size:10px;color:var(--muted)}.raw-name{font-size:11px;color:#668079;margin-bottom:5px;max-width:200px}.money{white-space:nowrap;font-weight:600;font-variant-numeric:tabular-nums}.source-link{border:0;background:transparent;padding:0;color:var(--teal);font-size:10px;text-align:left;cursor:pointer}.qty{width:69px;border:1px solid #d7e2de;border-radius:6px;padding:7px 8px;font-size:12px}.qty[aria-invalid=true]{border-color:var(--red)}.row-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;max-width:200px}.reason{font-size:10px;color:var(--muted);max-width:200px;margin-top:7px}.excluded-row{background:#fcfcf9}.unmatched-row{background:#fffaf1}.table-bottom{padding:16px 22px;background:#fbfcfa;border-top:1px solid var(--line);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;gap:15px}.empty{padding:44px 22px;text-align:center;color:var(--muted)}.result-grid{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(250px,1fr);gap:20px}.hero-result{background:#133f36;border-color:#133f36;color:white;position:relative;overflow:hidden}.hero-result:after{content:"";width:230px;height:230px;position:absolute;right:-80px;top:-65px;border:35px solid #316153;border-radius:50%;opacity:.5;pointer-events:none}.hero-result .card-head{position:relative;z-index:1}.hero-result p{color:#b1ccc0;font-size:12px}.hero-price{font-size:36px;font-weight:650;letter-spacing:-1px;margin:18px 0 7px;position:relative;z-index:1}.hero-price .arrow{font-size:23px;color:#80ae98;margin:0 9px}.hero-delta{color:#edcf96;font-size:13px}.hero-result .foot{font-size:11px;color:#a7c5b6;border-top:1px solid #41695a;padding-top:15px;margin-top:20px}.condition{display:flex;align-items:flex-start;gap:11px;padding:13px 0}.condition+.condition{border-top:1px solid var(--line)}.condition svg{color:var(--amber);width:18px;height:18px;margin-top:2px}.condition b{font-size:12px;display:block}.condition p{font-size:11px;color:var(--muted);margin-top:4px}.list-question{margin:0;padding-left:20px}.list-question li{font-size:12px;padding:7px 0 7px 5px}.scenario-head{display:flex;justify-content:space-between;gap:14px;align-items:center}.switch{position:relative;display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-size:12px;color:var(--muted)}.switch input{width:17px;height:17px;accent-color:var(--teal)}.scenario-controls{display:grid;grid-template-columns:1fr 84px;gap:18px;align-items:center;margin:18px 0}.scenario-controls input[type=range]{width:100%;accent-color:var(--teal)}.scenario-controls input[type=text]{width:84px;padding:8px;border:1px solid #d4e2da;border-radius:7px}.scenario-output{background:#f0f7f3;border-radius:9px;padding:15px 17px;margin-top:12px}.scenario-output strong{font-size:23px;display:block}.scenario-output p{font-size:11px;margin-top:4px;color:#5c7e6e}.review-box{border:1px dashed #cbdad2;border-radius:9px;padding:15px;margin-top:17px;font-size:11px;color:var(--muted)}.review-box b{color:var(--ink);display:block;margin-bottom:4px}.help-box{font-size:11px;color:var(--muted);line-height:1.65;margin-top:15px}.error-list{margin:0;padding-left:20px;font-size:12px}.report-table td,.report-table th{padding:12px 13px}.status-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.toast{position:fixed;bottom:25px;left:calc(50% + 90px);transform:translateX(-50%);background:#183e33;color:white;border:1px solid #365c4d;border-radius:10px;box-shadow:0 12px 30px #12372a22;padding:13px 20px;z-index:20;font-size:12px;max-width:90vw}.toast[hidden]{display:none}dialog{border:1px solid #d9e5dc;border-radius:16px;padding:0;width:720px;max-width:calc(100vw - 32px);max-height:86vh;box-shadow:0 20px 80px #14332735;color:var(--ink)}dialog::backdrop{background:#15352a66;backdrop-filter:blur(2px)}.dialog-head{padding:21px 24px;display:flex;justify-content:space-between;align-items:center;gap:15px;border-bottom:1px solid var(--line)}.dialog-body{padding:23px 24px;max-height:65vh;overflow:auto}.dialog-foot{padding:16px 24px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}.close-btn{width:30px;height:30px;border-radius:7px;background:#f0f4f1;display:grid;place-items:center;color:var(--muted)}.dialog-tabs{display:flex;gap:8px;margin-bottom:20px}.doc-sheet{border:1px solid var(--line);border-radius:8px;padding:18px}.doc-sheet h3{margin-bottom:8px}.doc-sheet p{font-size:12px;color:var(--muted);margin-bottom:10px}.doc-sheet table{font-size:11px}.doc-sheet td,.doc-sheet th{padding:10px}.highlight td{background:#fff0cd}.review-check{display:flex;gap:9px;align-items:flex-start;margin:13px 0;font-size:12px}.review-check input{accent-color:var(--teal);margin-top:3px}.storage-note{color:#a66b16}.mobile-brand{display:none}.print-report{display:none}noscript{display:block;padding:20px;background:var(--amber-bg)}
+.content:focus{outline:none}.setup-grid>div,.result-grid>div,.card{min-width:0}
+@media(min-width:1500px){.content{padding:42px 50px}.topbar{padding-inline:50px}.stat-value{font-size:32px}td{padding-block:20px}}
+@media(max-width:1150px){.app{grid-template-columns:200px minmax(0,1fr)}.sidebar{padding:28px 16px}.content{padding:27px 24px}.topbar{padding:0 24px}.setup-grid,.result-grid{grid-template-columns:1fr}.stack{display:grid;grid-template-columns:1fr 1fr}.hero-price{font-size:32px}.stats{gap:10px}.stat{padding:16px}.stat-value{font-size:24px}h1{font-size:29px}}
+@media(max-width:760px){.app{display:block}.sidebar{height:auto;position:static;padding:17px 18px;gap:17px}.brand{font-size:20px}.brand-sub,.side-label,.side-case,.side-bottom{display:none}.step-nav{flex-direction:row}.step{font-size:11px;padding:8px 6px;gap:6px;justify-content:center}.step-number{width:20px;height:20px;font-size:10px}.topbar{height:56px;padding:0 18px}.topbar .breadcrumb{font-size:10px}.local-pill{display:none}.content{padding:24px 16px}.page-head{flex-direction:column;gap:12px}h1{font-size:27px}.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1/-1}.grid-2,.grid-3,.stack{grid-template-columns:1fr}.card{padding:18px}.table-card{padding:0}.table-toolbar{align-items:flex-start;flex-direction:column;padding:16px}.footer-actions{align-items:flex-start}.footer-actions .saved-note{max-width:170px}.hero-price{font-size:27px}.hero-price .arrow{margin-inline:3px}.toast{left:50%;width:max-content}.field-pair{gap:10px}.report-table{min-width:600px}}
+@media print{body{background:#fff;color:#111;font-size:10pt}.app,.toast,dialog,noscript{display:none!important}.print-report{display:block!important}.print-report h1{font-size:23pt;margin:12px 0}.print-report h2{font-size:14pt;margin:22px 0 10px}.print-report h3{margin:12px 0 8px}.print-report p{margin:8px 0}.print-report .print-meta{font-size:9pt;color:#555}.print-report .print-banner{border:1px solid #aaa;padding:10px 13px;margin:15px 0;font-size:9pt}.print-report table{font-size:9pt}.print-report td,.print-report th{padding:9px 8px;color:#111;text-transform:none;font-size:9pt}.print-report tr{break-inside:avoid}.print-report h2{break-after:avoid}.print-report .print-summary{font-size:13pt;font-weight:650}.print-report .print-foot{margin-top:22px;border-top:1px solid #ccc;padding-top:10px;font-size:8pt}thead{display:table-header-group}@page{size:A4;margin:16mm}}
+</style></head><body>
+<noscript>Для прототипа требуется JavaScript. Включите его и откройте файл снова.</noscript>
+<div class="app">
+<aside class="sidebar"><div><div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h5l3-7 3 14 3-7h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Контур</div><div class="brand-sub">АНАЛИТИКА МЕДСЕТИ</div></div>
+<div><div class="side-label">РАЗБОР КЛИНИКИ</div><nav class="step-nav" aria-label="Экраны прототипа"><button class="step" data-screen="1"><span class="step-number">1</span>Задача и источники</button><button class="step" data-screen="2"><span class="step-number">2</span>Сопоставление</button><button class="step" data-screen="3"><span class="step-number">3</span>Разбор условий</button></nav></div>
+<div class="side-case"><div class="side-label">ТЕКУЩИЙ КЕЙС</div><strong>Стоматология «Пример»</strong><p>Москва · один филиал<br>ДМС–001 / Демонстрация</p><div style="margin-top:14px"><span id="side-status" class="pill">Черновик</span></div></div>
+<div class="side-bottom">Рабочее место аналитика<span>Прототип<br>Все данные вымышлены</span><button class="btn quiet" data-action="help" style="padding-left:0;color:#bad1c8;margin-top:10px">Как показать демо ↗</button></div></aside>
+<div class="main"><header class="topbar"><div class="breadcrumb">Медсеть <span style="padding:0 9px">/</span> <b>Разбор условий клиники</b></div><div class="top-actions"><span class="local-pill"><span class="dot"></span>Локально · без интернета</span><button class="btn quiet small-btn" data-action="reset">Начать заново</button><span class="avatar" aria-hidden="true">ДМ</span></div></header>
+<main class="content" id="main-content" tabindex="-1"></main></div></div>
+<dialog id="modal" aria-labelledby="modal-title"><div class="dialog-head"><h2 id="modal-title"></h2><button class="close-btn" data-action="close-modal" aria-label="Закрыть окно"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.6"/></svg></button></div><div class="dialog-body" id="modal-body"></div><div class="dialog-foot" id="modal-foot"></div></dialog>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div><section class="print-report" id="print-report" aria-label="Отчёт для печати"></section>
+<script>
+'use strict';
+(function(){
+/* ENGINE_START */
+const ROWS = [
+{id:'exam',name:'Первичный осмотр',unit:'за приём',oldName:'Приём стоматолога-терапевта первичный',newName:'Первичная консультация стоматолога',oldPrice:100000,newPrice:110000,qty:'100',compatible:true,line:1},
+{id:'anesthesia',name:'Анестезия',unit:'за введение',oldName:'Анестезия инфильтрационная',newName:'Инфильтрационная анестезия',oldPrice:60000,newPrice:65000,qty:'160',compatible:true,line:2},
+{id:'xray',name:'Прицельный снимок',unit:'за снимок',oldName:'Внутриротовая прицельная рентгенография',newName:'Прицельный снимок одного зуба',oldPrice:50000,newPrice:55000,qty:'80',compatible:true,line:3},
+{id:'fill-a',name:'Лечение A · одна поверхность',unit:'за зуб · одинаковый состав',oldName:'Лечение кариеса, композит, 1 поверхность',newName:'Композитная реставрация, 1 поверхность',oldPrice:600000,newPrice:630000,qty:'50',compatible:true,line:4},
+{id:'fill-b',name:'Лечение B · две поверхности',unit:'за зуб · одинаковый состав',oldName:'Лечение кариеса, композит, 2 поверхности',newName:'Композитная реставрация, 2 поверхности',oldPrice:800000,newPrice:840000,qty:'30',compatible:true,line:5},
+{id:'hygiene',name:'Профессиональная гигиена',unit:'разный объём услуги',oldName:'Профессиональная гигиена всей полости рта',newName:'Профессиональная гигиена одного сегмента',oldPrice:380000,newPrice:150000,qty:'',compatible:false,line:6}
+];
+const HYGIENE_REASON='Разный объём: вся полость рта и один сегмент. Эквивалентность и коэффициент пересчёта не подтверждены.';
+function freshState(){return {schema:1,screen:1,revision:1,case:{author:'Анна',oldDiscount:'10',newDiscount:'12',oldDays:'30',newDays:'15'},quantities:Object.fromEntries(ROWS.map(r=>[r.id,r.qty])),selections:Object.fromEntries(ROWS.map(r=>[r.id,{status:'pending',reason:''}])),scenario:{enabled:false,discount:'15'},review:null};}
+function percentBp(value){const s=String(value).trim().replace(',','.');if(!/^\d{1,3}(\.\d{1,2})?$/.test(s))return null;const a=s.split('.');const v=Number(a[0])*100+Number(((a[1]||'')+'00').slice(0,2));return v<=10000?v:null;}
+function quantity(value){const s=String(value).trim();return /^(0|[1-9]\d{0,5})$/.test(s)?Number(s):null;}
+function days(value){const q=quantity(value);return q!==null&&q<=365?q:null;}
+function priceAfterDiscount(cents,bp){return Math.floor((cents*(10000-bp)+5000)/10000);}
+function calculate(s){
+ const a=percentBp(s.case.oldDiscount),b=percentBp(s.case.newDiscount);
+ const issues=[];
+ if(a===null)issues.push('Старая скидка: введите число от 0 до 100, не более двух знаков после запятой.');
+ if(b===null)issues.push('Новая скидка: введите число от 0 до 100, не более двух знаков после запятой.');
+ const confirmed=ROWS.filter(r=>s.selections[r.id].status==='confirmed');
+ const pending=ROWS.filter(r=>s.selections[r.id].status==='pending');
+ const excluded=ROWS.filter(r=>s.selections[r.id].status==='excluded');
+ const groups=confirmed.map(r=>{
+  const q=quantity(s.quantities[r.id]);
+  if(!r.compatible)issues.push(r.name+': составы не подтверждены как одинаковые.');
+  if(q===null)issues.push(r.name+': задайте целое количество от 0 до 999 999 или исключите услугу.');
+  const op=a===null?null:priceAfterDiscount(r.oldPrice,a),np=b===null?null:priceAfterDiscount(r.newPrice,b);
+  return {row:r,qty:q,oldUnit:op,newUnit:np,oldTotal:q===null||op===null?null:op*q,newTotal:q===null||np===null?null:np*q};
+ });
+ const valid=issues.length===0;
+ const oldTotal=valid?groups.reduce((n,g)=>n+g.oldTotal,0):null;
+ const newTotal=valid?groups.reduce((n,g)=>n+g.newTotal,0):null;
+ const delta=valid?newTotal-oldTotal:null;
+ const change=valid&&oldTotal!==0?delta/oldTotal*100:null;
+ const allZero=groups.length>0&&groups.every(g=>g.qty===0);
+ const sbp=percentBp(s.scenario.discount);
+ let scenario=null;
+ if(s.scenario.enabled&&sbp!==null&&valid&&groups.length){
+  const total=groups.reduce((n,g)=>n+priceAfterDiscount(g.row.newPrice,sbp)*g.qty,0);
+  scenario={total,againstNew:total-newTotal,againstOld:total-oldTotal,bp:sbp};
+ }
+ return {valid,issues,groups,pending,excluded,count:groups.length,oldTotal,newTotal,delta,change,allZero,scenario,scenarioValid:!s.scenario.enabled||sbp!==null};
+}
+/* ENGINE_END */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const money=c=>c===null?'—':new Intl.NumberFormat('ru-RU',{style:'currency',currency:'RUB',minimumFractionDigits:c%100===0?0:2,maximumFractionDigits:2}).format(c/100);
+const pct=n=>n===null?'—':new Intl.NumberFormat('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n)+'%';
+const signMoney=c=>c===null?'—':(c>0?'+':'')+money(c);
+const date=ts=>new Intl.DateTimeFormat('ru-RU',{dateStyle:'short',timeStyle:'short',timeZone:'Europe/Moscow'}).format(ts);
+const ICONS={arrow:'<path d="M5 12h14m-5-5 5 5-5 5"/>',check:'<path d="m5 12 4 4L19 6"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/>',file:'<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M8 12h8m-8 4h6"/>',print:'<path d="M6 9V3h12v6M6 17H3V9h18v8h-3M6 14h12v7H6z"/><path d="M17 12h1"/>',warning:'<path d="m12 3 10 18H2zM12 9v5m0 3v1"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',search:'<circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/>',link:'<path d="m10 13 4-4m-6 6-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 0 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0"/>',down:'<path d="m6 9 6 6 6-6"/>'};
+const icon=(name)=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONS[name]||ICONS.info)+'</svg>';
+const STORAGE='dms-hackathon-prototype-v1:'+location.pathname;
+let storageAvailable=true,state=freshState(),filter='all',toastTimer=null,modalContext=null;
+function restore(){
+ try{
+  const raw=localStorage.getItem(STORAGE);if(!raw)return;
+  const x=JSON.parse(raw);if(!x||x.schema!==1)return;
+  const clean=freshState();
+  clean.screen=[1,2,3].includes(x.screen)?x.screen:1;
+  clean.revision=Number.isSafeInteger(x.revision)&&x.revision>0?x.revision:1;
+  for(const k of Object.keys(clean.case))if(typeof x.case?.[k]==='string')clean.case[k]=x.case[k].slice(0,100);
+  for(const r of ROWS){
+   if(typeof x.quantities?.[r.id]==='string')clean.quantities[r.id]=x.quantities[r.id].slice(0,12);
+   const sel=x.selections?.[r.id];
+   if(sel&&['pending','confirmed','excluded'].includes(sel.status)&&!(sel.status==='confirmed'&&!r.compatible))clean.selections[r.id]={status:sel.status,reason:String(sel.reason||'').slice(0,500)};
+   if(clean.selections[r.id].status==='excluded'&&!clean.selections[r.id].reason)clean.selections[r.id]={status:'pending',reason:''};
+  }
+  if(typeof x.scenario?.discount==='string')clean.scenario.discount=x.scenario.discount.slice(0,20);
+  clean.scenario.enabled=x.scenario?.enabled===true;
+  if(x.review&&x.review.revision===clean.revision&&typeof x.review.name==='string'&&typeof x.review.at==='number'&&Number.isFinite(x.review.at)&&x.review.name.trim()&&x.review.name.trim().toLowerCase()!==clean.case.author.trim().toLowerCase())clean.review={revision:clean.revision,name:x.review.name.slice(0,100),at:x.review.at};
+  state=clean;
+  if(reviewProblems(calculate(state)).length)state.review=null;
+ }catch(e){storageAvailable=false;}
+}
+function save(){try{localStorage.setItem(STORAGE,JSON.stringify(state));storageAvailable=true;}catch(e){storageAvailable=false;}updateChrome();}
+function changed(){state.revision++;state.review=null;save();}
+function reviewed(){return !!state.review&&state.review.revision===state.revision&&reviewProblems(calculate(state)).length===0;}
+function authoredOverrides(){return [['oldDiscount','10'],['newDiscount','12'],['oldDays','30'],['newDays','15']].some(([k,v])=>state.case[k]!==v);}
+function reviewProblems(c){
+ const issues=c.issues.slice();
+ if(c.count===0)issues.push('Подтвердите хотя бы одну сопоставимую группу.');
+ if(c.pending.length)issues.push('Разберите все строки: осталось без решения '+c.pending.length+'.');
+ if(c.allZero)issues.push('Все количества равны нулю: задайте ненулевой объём условной корзины.');
+ if(days(state.case.oldDays)===null||days(state.case.newDays)===null)issues.push('Отсрочка оплаты: введите целое число календарных дней от 0 до 365.');
+ if(!state.case.author.trim())issues.push('Укажите имя автора на экране задачи.');
+ if(!c.scenarioValid)issues.push('Исправьте скидку сценария или выключите сценарий.');
+ return issues;
+}
+function updateChrome(){
+ document.querySelectorAll('[data-screen]').forEach(b=>{const active=Number(b.dataset.screen)===state.screen;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
+ $('#side-status').textContent=reviewed()?'Проверено для демо':'Черновик · v'+state.revision;
+ $('#side-status').className='pill '+(reviewed()?'green':'');
+ const header=$('#review-status');if(header){header.textContent=reviewed()?'Проверено для демо':'Черновик · v'+state.revision;header.className='pill '+(reviewed()?'green':'amber');}
+ const saved=$('#saved-note');if(saved)saved.innerHTML=storageAvailable?'Изменения сохраняются в этом браузере. Только демоданные.':'<span class="storage-note">Браузер не сохраняет изменения. Оставьте вкладку открытой.</span>';
+}
+function toast(s){clearTimeout(toastTimer);const t=$('#toast');t.textContent=s;t.hidden=false;toastTimer=setTimeout(()=>t.hidden=true,3800);}
+function setScreen(n){state.screen=n;save();render();window.scrollTo({top:0,behavior:'instant'});$('#main-content').focus({preventScroll:true});}
+function render(){
+ $('#main-content').innerHTML=state.screen===1?renderSetup():state.screen===2?renderMapping():renderResult();
+ updateChrome();if(state.screen===2)updateMappingSummary();
+ if(state.screen===3)updateScenario();
+}
+function title(kicker,titleText,lead,right=''){return '<div class="page-head"><div><p class="eyebrow">'+kicker+'</p><h1>'+titleText+'</h1><p class="lead">'+lead+'</p></div>'+right+'</div>';}
+const demoNotice=()=>'<div class="notice">'+icon('info')+'<span><b>Демонстрационный кейс.</b> Клиника, прайсы и объёмы вымышлены. Подготовка данных и экспертная сверка выполняются вручную.</span></div>';
+function field(label,key,help,kind='text'){
+ const value=state.case[key];
+ const invalid=key.includes('Discount')?percentBp(value)===null:key.includes('Days')?days(value)===null:key==='author'?!value.trim():false;
+ return '<div class="field"><label for="case-'+key+'">'+label+'</label><input id="case-'+key+'" data-case="'+key+'" type="'+kind+'" '+(key==='author'?'maxlength="100"':'inputmode="decimal" maxlength="12"')+' value="'+esc(value)+'" aria-invalid="'+invalid+'"><small id="help-'+key+'">'+help+'</small></div>';
+}
+function sourceCard(which){
+ const old=which==='old';return '<div class="source"><div class="source-top"><span class="file-icon">'+icon('file')+'</span><div><strong>'+ (old?'Действующий прайс':'Предложенный прайс')+'</strong><span>'+(old?'Прайс A · 01.01.2026':'Прайс B · 01.11.2026')+'</span></div></div><div class="source-body"><div class="source-row"><span>Документ</span><span>Демо · '+(old?'A':'B')+' · версия 1</span></div><div class="source-row"><span>Состав</span><span>6 исходных строк</span></div><div class="source-row"><span>Филиал</span><span>Москва · пример № 1</span></div><button class="btn small-btn" data-action="source" data-side="'+which+'">'+icon('search')+'Посмотреть источник</button></div></div>';
+}
+function renderSetup(){
+ return title('ШАГ 1 ИЗ 3 · ДМС–001','Сравните условия клиники','Два прайса, одинаковый объём и критерии, по которым страховщик принимает решение.','<span class="pill amber">Демоданные</span>')+demoNotice()+
+ '<div class="setup-grid"><div class="stack" style="display:flex"><section class="card"><div class="card-head"><div><h2>Задача разбора</h2><p>Действующие условия → предложение клиники</p></div><span class="task-code">ДМС–001</span></div><div class="field-pair"><div class="field"><label for="clinic">Клиника</label><input id="clinic" value="Стоматология «Пример»" readonly></div><div class="field"><label for="city">Регион / филиал</label><input id="city" value="Москва · пример № 1" readonly></div></div><div class="divider"></div><div class="grid-2">'+sourceCard('old')+sourceCard('new')+'</div></section>'+
+ '<section class="card"><div class="card-head"><div><h2>Условия для расчёта</h2><p>Ручной ввод. Скидки распространяются на все пять сопоставимых услуг.</p></div></div><div class="field-pair">'+field('Действующая скидка, %','oldDiscount','В демопрайсе A — 10%.')+field('Предложенная скидка, %','newDiscount','В демопрайсе B — 12%.')+'</div><div class="field-pair">'+field('Действующая отсрочка, дней','oldDays','30 календарных дней с получения счёта.')+field('Предложенная отсрочка, дней','newDays','15 календарных дней с получения счёта.')+'</div><div class="divider"></div>'+field('Автор разбора','author','Проверяющий должен отличаться от автора.')+'<p class="help-box">Если изменить исходные условия, отчёт пометит их как ручные допущения. Настоящие документы в этот прототип не загружаются.</p></section></div>'+
+ '<div class="stack"><section class="card"><div class="card-head"><h2>Что значит «выгоднее»</h2></div><div class="criteria"><span class="check-icon">'+icon('check')+'</span><div><strong>Стоимость одинакового набора</strong><p>Сравниваем одинаковые услуги и количества после применимых скидок.</p></div></div><div class="criteria"><span class="check-icon">'+icon('check')+'</span><div><strong>Более длительная отсрочка</strong><p>Показываем изменение календарных дней; не переводим его в рубли.</p></div></div><div class="criteria"><span class="check-icon">'+icon('check')+'</span><div><strong>Проверяемый состав</strong><p>Услуги с неясной эквивалентностью остаются вне финансового итога.</p></div></div></section><section class="card"><p class="eyebrow">ОБЛАСТЬ РАЗБОРА</p><h2>Одна клиника.<br>Одна условная корзина.</h2><p class="help-box">Объёмы заданы для демонстрации. Это не история обращений, не прогноз расходов и не расчёт всего договора.</p><div class="divider"></div><p class="small muted">Публичные цены других клиник не используются. Доступность записи и качество лечения не оценены.</p></section></div></div>'+
+ '<div class="footer-actions"><span id="saved-note" class="saved-note"></span><button class="btn primary" data-action="start">К сопоставлению '+icon('arrow')+'</button></div>';
+}
+
+function mappingRow(r){
+ const sel=state.selections[r.id],status=sel.status;
+ const cls=status==='excluded'?'excluded-row':!r.compatible?'unmatched-row':'';
+ const badge=status==='confirmed'?'<span class="pill green">'+icon('check')+'Подтверждено</span>':status==='excluded'?'<span class="pill">Исключено</span>':'<span class="pill amber">'+(r.compatible?'Кандидат':'Разный состав')+'</span>';
+ let actions='';
+ if(status==='pending')actions='<button class="btn small-btn soft" data-action="confirm" data-id="'+r.id+'" '+(!r.compatible?'disabled title="Составы не совпадают: требуется экспертная сверка"':'')+'>Подтвердить</button><button class="btn small-btn" data-action="exclude" data-id="'+r.id+'">Исключить</button>';
+ else actions='<button class="btn small-btn quiet" data-action="reopen" data-id="'+r.id+'">Пересмотреть</button>';
+ const q=state.quantities[r.id];
+ return '<tr data-row="'+r.id+'" class="'+cls+'"><td style="min-width:145px"><div class="service-name">'+esc(r.name)+'</div><span class="service-unit">'+esc(r.unit)+'</span></td><td style="min-width:175px"><p class="raw-name">'+esc(r.oldName)+'</p><div class="money">'+money(r.oldPrice)+'</div><button class="source-link" data-action="source" data-side="old" data-id="'+r.id+'">Прайс A · строка '+r.line+' ↗</button></td><td style="min-width:175px"><p class="raw-name">'+esc(r.newName)+'</p><div class="money">'+money(r.newPrice)+'</div><button class="source-link" data-action="source" data-side="new" data-id="'+r.id+'">Прайс B · строка '+r.line+' ↗</button></td><td style="min-width:82px">'+(r.compatible?'<input class="qty" aria-label="Количество: '+esc(r.name)+'" data-qty="'+r.id+'" inputmode="numeric" type="text" maxlength="8" value="'+esc(q)+'" aria-invalid="'+(quantity(q)===null)+'"><div class="service-unit" style="margin-top:4px">условно</div>':'<span class="muted">—</span>')+'</td><td style="min-width:185px">'+badge+'<div class="row-actions">'+actions+'</div>'+(sel.reason?'<p class="reason">'+esc(sel.reason)+'</p>':'')+'</td></tr>';
+}
+function renderMapping(){
+ const c=calculate(state),eligible=ROWS.filter(r=>r.compatible&&state.selections[r.id].status==='pending').length;
+ const visible=ROWS.filter(r=>filter==='all'||state.selections[r.id].status===filter);
+ return title('ШАГ 2 ИЗ 3 · СОПОСТАВЛЕНИЕ','Одинаковые услуги — в расчёт','Проверьте состав, единицы и исходные названия. Условия расчёта применяются только к подтверждённым группам.','<span class="pill">6 исходных пар</span>')+
+ '<div class="stats"><div class="stat"><div class="stat-label">'+icon('check')+'Подтверждено</div><div class="stat-value" id="mapped-count">'+c.count+' <span style="font-size:14px;color:#8c9c96">/ 6</span></div><div class="stat-note">групп услуг в текущей версии</div></div><div class="stat"><div class="stat-label">'+icon('clock')+'Без решения</div><div class="stat-value" id="pending-count">'+c.pending.length+'</div><div class="stat-note">подтвердите или исключите</div></div><div class="stat"><div class="stat-label">Изменение подтверждённой корзины</div><div class="stat-value" id="mapping-delta">'+(c.valid&&c.count?signMoney(c.delta):'—')+'</div><div class="stat-note" id="mapping-note">'+(c.valid&&c.count?pct(c.change)+' · только сопоставимые услуги':'Появится после подтверждения')+'</div></div></div>'+
+ '<div class="notice">'+icon('warning')+'<span><b>Неоднозначная услуга:</b> гигиена всей полости рта и одного сегмента — разный объём. Без экспертного основания эту пару нельзя подтвердить.</span></div>'+
+ '<section class="card table-card"><div class="table-toolbar"><div class="filters" role="group" aria-label="Фильтр сопоставлений">'+[['all','Все · 6'],['pending','Без решения · '+c.pending.length],['confirmed','Подтверждено · '+c.count],['excluded','Исключено · '+c.excluded.length]].map(([id,label])=>'<button class="filter '+(filter===id?'active':'')+'" data-filter="'+id+'" aria-pressed="'+(filter===id)+'">'+label+'</button>').join('')+'</div><button class="btn small-btn soft" data-action="confirm-all" '+(!eligible?'disabled':'')+'>'+icon('check')+'Подтвердить '+eligible+' сопоставимых</button></div><div class="table-scroll"><table><thead><tr><th>Группа / единица</th><th>Действующий прайс</th><th>Предложенный прайс</th><th>Кол-во</th><th>Решение аналитика</th></tr></thead><tbody>'+visible.map(mappingRow).join('')+'</tbody></table>'+(visible.length?'':'<div class="empty">В этом фильтре пока нет услуг.</div>')+'</div><div class="table-bottom"><span>Все исходные цены — до скидки. Количества — условная корзина.</span><span>Исключено: '+c.excluded.length+' из 6</span></div></section><div id="mapping-errors"></div>'+
+ '<div class="footer-actions"><button class="btn" data-screen="1">← К задаче</button><span class="saved-note" id="saved-note"></span><button class="btn primary" data-screen="3">К разбору условий '+icon('arrow')+'</button></div>';
+}
+function updateMappingSummary(){
+ const c=calculate(state);if(!$('#mapping-delta'))return;
+ $('#mapping-delta').textContent=c.valid&&c.count?signMoney(c.delta):'—';
+ $('#mapping-note').textContent=c.valid&&c.count?(c.change===null?'Процент не определён: нулевая база':pct(c.change))+' · '+c.count+' подтверждённых групп':'Подтвердите услуги и проверьте количества';
+ $('#mapping-errors').innerHTML=c.issues.length?'<div class="notice danger">'+icon('warning')+'<div><b>Расчёт требует исправления</b><ul class="error-list">'+c.issues.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div></div>':'';
+ document.querySelectorAll('[data-qty]').forEach(input=>input.setAttribute('aria-invalid',quantity(input.value)===null?'true':'false'));
+}
+function paymentText(){
+ const a=days(state.case.oldDays),b=days(state.case.newDays);
+ if(a===null||b===null)return {title:'Отсрочка требует уточнения',body:'Введите целые календарные дни от 0 до 365 на экране задачи.',icon:'warning'};
+ return {title:'Отсрочка: '+a+' → '+b+' календарных дней',body:b<a?'Условия хуже по критерию «более длительная отсрочка». Срок считается с получения счёта.':b>a?'Отсрочка дольше. Денежный эффект отдельно не рассчитывается.':'Срок не изменился. Денежный эффект отдельно не рассчитывается.',icon:'clock'};
+}
+function reportRows(c,forPrint=false){
+ return c.groups.map(g=>'<tr><td>'+esc(g.row.name)+(forPrint?'<br><small>A/B · строка '+g.row.line+'</small>':'')+'</td><td>'+g.qty+'</td><td class="money">'+money(g.oldUnit)+'</td><td class="money">'+money(g.newUnit)+'</td><td class="money">'+signMoney(g.newTotal-g.oldTotal)+'</td></tr>').join('');
+}
+function limitsHtml(c){
+ return '<p>Итог относится к '+c.count+' подтверждённым группам из 6 исходных пар. Исключено: '+c.excluded.length+'; без решения: '+c.pending.length+'. Это условная корзина, не весь договор и не прогноз.</p>'+
+ c.excluded.map(r=>'<p><b>'+esc(r.name)+':</b> '+esc(state.selections[r.id].reason)+'</p>').join('')+
+ (c.pending.length?'<p><b>Без решения:</b> '+c.pending.map(r=>esc(r.name)).join(', ')+'. Они не входят в сумму.</p>':'')+
+ '<p>Доступность записи и качество лечения не оценены. Цена сама по себе не определяет предпочтительный вариант.</p>';
+}
+function renderResult(){
+ const c=calculate(state),payment=paymentText();
+ const usable=c.valid&&c.count>0;
+ const validBadge='<span id="review-status" class="pill '+(reviewed()?'green':'amber')+'">'+(reviewed()?'Проверено для демо':'Черновик · v'+state.revision)+'</span>';
+ let mainSummary=usable?'<div class="hero-price"><span data-testid="old-total">'+money(c.oldTotal)+'</span><span class="arrow">→</span><span data-testid="new-total">'+money(c.newTotal)+'</span></div><div class="hero-delta" data-testid="delta">'+signMoney(c.delta)+' · '+(c.change===null?'процент не определён при нулевой базе':(c.change>0?'+':'')+pct(c.change))+'</div>':'<div class="hero-price" style="font-size:25px">'+(c.issues.length?'Нужно исправить данные':'Подтвердите сопоставимые услуги')+'</div><p>Числовой итог появится, когда есть проверяемый состав и корректные количества.</p>';
+ return title('ШАГ 3 ИЗ 3 · РЕЗУЛЬТАТ','Условия, которые можно обсудить','Стоматология «Пример» · сравнение действующего и предложенного прайсов',validBadge)+demoNotice()+
+ (c.pending.length?'<div class="notice">'+icon('clock')+'<span>Разбор ещё не завершён: '+c.pending.length+' пар без решения. Промежуточный итог относится только к подтверждённым услугам.</span></div>':'')+
+ (c.issues.length?'<div class="notice danger">'+icon('warning')+'<ul class="error-list">'+c.issues.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>':'')+
+ (authoredOverrides()?'<div class="notice">'+icon('info')+'<span><b>Ручные допущения.</b> Скидка или отсрочка изменены относительно демопрайсов. Расчёт не означает, что клиника предложила эти условия.</span></div>':'')+
+ '<div class="result-grid"><div><section class="card hero-result"><div class="card-head"><div><h2>Стоимость сопоставимой корзины</h2><p>После применимых скидок '+esc(state.case.oldDiscount)+'% / '+esc(state.case.newDiscount)+'%</p></div></div>'+mainSummary+'<div class="foot">'+c.count+' подтверждённых групп · '+c.excluded.length+' исключено · количества условные</div></section>'+
+ '<section class="card" style="margin-top:20px"><div class="card-head"><h2>Из чего складывается изменение</h2><span class="pill">'+c.count+' групп</span></div><div class="table-scroll"><table class="report-table"><thead><tr><th>Услуга</th><th>Кол-во</th><th>Старая, ₽/ед.</th><th>Новая, ₽/ед.</th><th>Δ строки</th></tr></thead><tbody>'+(usable?reportRows(c):'<tr><td colspan="5" class="muted">Нет корректного расчёта. Вернитесь к сопоставлению.</td></tr>')+'</tbody></table></div><p class="help-box">Эффективная единичная цена округляется до копеек, затем умножается на одинаковое количество. Изменение — разница сумм строк.</p></section>'+
+ '<section class="card" style="margin-top:20px"><div class="scenario-head"><div><h2>Переговорный сценарий</h2><p class="muted small" style="margin-top:4px">Гипотеза команды, не предложение клиники</p></div><label class="switch"><input type="checkbox" id="scenario-enabled" '+(state.scenario.enabled?'checked':'')+'>Включить</label></div><div id="scenario-controls" '+(!state.scenario.enabled?'hidden':'')+'><div class="scenario-controls"><div><label class="field-label" for="scenario-range">Скидка на новый прайс, %</label><input type="range" id="scenario-range" min="0" max="100" step="0.01" value="'+(percentBp(state.scenario.discount)===null?15:percentBp(state.scenario.discount)/100)+'"></div><div><label class="field-label" for="scenario-discount">Точно, %</label><input type="text" inputmode="decimal" id="scenario-discount" maxlength="12" value="'+esc(state.scenario.discount)+'" aria-label="Скидка переговорного сценария"></div></div><div id="scenario-results" aria-live="polite"></div></div><p id="scenario-off-note" class="help-box" '+(state.scenario.enabled?'hidden':'')+'>Проверьте, как изменится стоимость корзины при другой скидке. Исходное предложение останется неизменным.</p></section></div>'+
+ '<div><section class="card"><h2>Помимо цены</h2><div class="condition">'+icon(payment.icon)+'<div><b>'+esc(payment.title)+'</b><p>'+esc(payment.body)+'</p></div></div><div class="condition">'+icon('warning')+'<div><b>Ограничения и состав</b><div class="help-box" style="margin-top:4px">'+limitsHtml(c)+'</div></div></div></section>'+
+ '<section class="card"><div class="card-head"><h2>Вопросы клинике</h2></div><ol class="list-question"><li>Можно ли сохранить отсрочку '+esc(state.case.oldDays)+' календарных дней с получения счёта?</li><li>Что входит в гигиену: вся полость рта или один сегмент? Подтвердите одинаковый объём.</li><li>Какую скидку можно согласовать на сопоставимый набор и какие ограничения у неё есть?</li></ol></section>'+
+ '<section class="card"><h2>Проверка и отчёт</h2><div class="review-box" id="review-box">'+reviewHtml()+'</div><div class="stack" style="gap:9px;margin-top:14px;display:flex"><button class="btn soft" data-action="review">'+icon('check')+'Проверить результат</button><button class="btn primary" data-action="print">'+icon('print')+'Распечатать отчёт</button></div><p class="help-box">Проверка в демопрототипе — отметка человека, без авторизации и электронной подписи. Изменение входов её снимает.</p></section></div></div>'+
+ '<div class="footer-actions"><button class="btn" data-screen="2">← К сопоставлению</button><span class="saved-note" id="saved-note"></span><button class="btn quiet" data-action="source" data-side="old">'+icon('file')+'Источники</button></div>';
+}
+function reviewHtml(){return reviewed()?'<b>'+esc(state.review.name)+' · проверено для демо</b>Версия '+state.revision+' · '+date(state.review.at)+' МСК<br>Автор: '+esc(state.case.author):'<b>Черновик · версия '+state.revision+'</b>Нужно завершить сопоставление и выполнить независимую сверку. Автор: '+esc(state.case.author||'не указан');}
+function updateScenario(){
+ if(!$('#scenario-results'))return;
+ const c=calculate(state),enabled=state.scenario.enabled;
+ $('#scenario-controls').hidden=!enabled;$('#scenario-off-note').hidden=enabled;
+ const exact=$('#scenario-discount');if(exact)exact.setAttribute('aria-invalid',percentBp(state.scenario.discount)===null?'true':'false');
+ let html='';
+ if(!c.scenarioValid)html='<div class="notice danger">Введите скидку от 0 до 100%, не более двух знаков после запятой.</div>';
+ else if(!c.scenario)html='<p class="help-box">Сначала подтвердите услуги и исправьте исходные данные.</p>';
+ else{
+  const sc=c.scenario;
+  html='<div class="scenario-output"><span class="small muted">Гипотетическая стоимость корзины</span><strong data-testid="scenario-total">'+money(sc.total)+'</strong><p>'+money(Math.abs(sc.againstNew))+' '+(sc.againstNew<0?'ниже':sc.againstNew>0?'выше':'разница с')+' текущего предложения · '+money(Math.abs(sc.againstOld))+' '+(sc.againstOld<0?'ниже':sc.againstOld>0?'выше':'разница с')+' действующей корзины</p></div><p class="help-box">Эта скидка не согласована с клиникой. Разница не является достигнутой экономией.</p>';
+ }
+ $('#scenario-results').innerHTML=html;
+ if($('#review-box'))$('#review-box').innerHTML=reviewHtml();
+}
+function sourceModal(side,id){
+ const old=side!=='new';modalContext={type:'source',side:old?'old':'new',id:id||null};
+ const r=ROWS.find(r=>r.id===id);
+ openModal('Исходный демопрайс '+(old?'A':'B'),
+ '<div class="dialog-tabs"><button class="btn '+(old?'soft':'')+'" data-action="source" data-side="old" '+(id?'data-id="'+id+'"':'')+'>Прайс A</button><button class="btn '+(!old?'soft':'')+'" data-action="source" data-side="new" '+(id?'data-id="'+id+'"':'')+'>Прайс B</button></div><div class="doc-sheet"><h3>Стоматология «Пример» · демодокумент '+(old?'A':'B')+'</h3><p>Версия 1 · дата действия '+(old?'01.01.2026':'01.11.2026')+' · Москва, филиал № 1</p><p>Скидка: '+(old?'10%':'12%')+' на пять сопоставимых услуг. Отсрочка: '+(old?'30':'15')+' календарных дней с получения счёта.</p><div class="table-scroll"><table><thead><tr><th>Строка</th><th>Исходное название</th><th>Цена до скидки</th></tr></thead><tbody>'+ROWS.map(row=>'<tr class="'+(row.id===id?'highlight':'')+'"><td>'+row.line+'</td><td>'+esc(old?row.oldName:row.newName)+'</td><td class="money">'+money(old?row.oldPrice:row.newPrice)+'</td></tr>').join('')+'</tbody></table></div></div><p class="help-box">Вымышленные данные, подготовленные вручную. Это встроенный источник демопримера, не загруженный договор клиники. Для пяти сопоставимых услуг одинаковый состав задан условиями демонстрации. Гигиена отличается по объёму.</p>'+(r?'<p class="small muted">Выбрана строка '+r.line+': '+esc(r.name)+'.</p>':''),
+ '<button class="btn primary" data-action="close-modal">Закрыть источник</button>');
+}
+function openModal(titleText,body,foot){
+ $('#modal-title').textContent=titleText;$('#modal-body').innerHTML=body;$('#modal-foot').innerHTML=foot;
+ if(!$('#modal').open)$('#modal').showModal();
+}
+function closeModal(){$('#modal').close();modalContext=null;}
+function excludeModal(id){
+ const r=ROWS.find(r=>r.id===id);if(!r)return;
+ modalContext={type:'exclude',id};
+ openModal('Исключить услугу из расчёта','<p style="margin-bottom:18px"><b>'+esc(r.name)+'</b><br><span class="muted small">Пара останется в отчёте с причиной, но не повлияет на итог.</span></p><div class="field"><label for="exclude-reason">Причина исключения</label><textarea id="exclude-reason" rows="4" maxlength="500" required>'+esc(!r.compatible?HYGIENE_REASON:state.selections[id].reason)+'</textarea><small>Укажите основание. Пустая причина не допускается.</small></div><p id="exclude-error" class="small" style="color:var(--red)" role="alert"></p>','<button class="btn" data-action="close-modal">Отмена</button><button class="btn primary" data-action="save-exclude">Исключить из суммы</button>');
+}
+function reviewModal(){
+ const c=calculate(state),problems=reviewProblems(c);
+ modalContext={type:'review'};
+ if(problems.length){openModal('Сначала завершите разбор','<p style="margin-bottom:13px">Проверку нельзя отметить, пока есть следующие ограничения:</p><ul class="error-list">'+problems.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>','<button class="btn" data-action="close-modal">Закрыть</button><button class="btn primary" data-action="review-back">К сопоставлению</button>');return;}
+ openModal('Независимая сверка результата','<div class="notice teal">'+icon('info')+'<span>Проверяется версия '+state.revision+'. Это демонстрационная отметка, не подтверждение реальных договорных условий.</span></div><div class="field"><label for="reviewer-name">Имя проверяющего</label><input id="reviewer-name" maxlength="100" autocomplete="off" placeholder="Отличается от автора: '+esc(state.case.author)+'"></div><label class="review-check"><input type="checkbox" data-review-check>Сверены исходные строки, состав и причины исключений в демопримере.</label><label class="review-check"><input type="checkbox" data-review-check>Проверены скидки, количества, суммы и неценовые условия.</label><label class="review-check"><input type="checkbox" data-review-check>Понятны ограничения; сценарий не назван предложением клиники или экономией.</label><p id="review-error" class="small" style="color:var(--red)" role="alert"></p>','<button class="btn" data-action="close-modal">Отмена</button><button class="btn primary" data-action="save-review">Отметить проверенным</button>');
+}
+
+function makePrintReport(){
+ const c=calculate(state),payment=paymentText(),ok=c.valid&&c.count>0;
+ const status=reviewed()?'ПРОВЕРЕНО ДЛЯ ДЕМО':'ЧЕРНОВИК · НЕ ПРОВЕРЕН';
+ const scenario=c.scenario;
+ const sourceRows=ROWS.map(r=>'<tr><td>'+r.line+'</td><td>'+esc(r.oldName)+'<br><b>'+money(r.oldPrice)+'</b></td><td>'+esc(r.newName)+'<br><b>'+money(r.newPrice)+'</b></td></tr>').join('');
+ const inputs=authoredOverrides()?'<p><b>Ручные допущения:</b> значения скидки и/или отсрочки изменены относительно исходных демодокументов. Текущие значения: скидки '+esc(state.case.oldDiscount)+'% / '+esc(state.case.newDiscount)+'%; отсрочка '+esc(state.case.oldDays)+' / '+esc(state.case.newDays)+' дней. Они не являются предложением клиники.</p>':'';
+ return '<p class="print-meta">Контур · ДМС–001 · '+status+' · версия '+state.revision+'</p><h1>Разбор условий клиники</h1><p><b>Стоматология «Пример»</b> · Москва · один филиал</p><p class="print-meta">Подготовлен: '+date(Date.now())+' МСК. Автор: '+esc(state.case.author||'не указан')+'. '+(reviewed()?'Проверяющий: '+esc(state.review.name)+'; '+date(state.review.at)+' МСК.':'Независимая проверка не отмечена.')+'</p>'+
+ '<div class="print-banner"><b>Демонстрационный пример.</b> Все данные вымышлены. Количества — условная корзина, не история обращений и не прогноз. Проверка — отметка в локальном прототипе, без авторизации и электронной подписи.</div>'+
+ '<h2>1. Задача и критерии</h2><p>Сравнить действующий и предложенный прайсы одной клиники. Критерии: стоимость одинакового набора, более длительная отсрочка и подтверждённый состав услуг.</p>'+
+ '<p>Источники: демопрайс A, версия 1, действие с 01.01.2026; демопрайс B, версия 1, действие с 01.11.2026. Исходные скидки 10% / 12%; отсрочка 30 / 15 календарных дней с получения счёта.</p>'+inputs+
+ '<h2>2. Сопоставимая корзина</h2>'+
+ (ok?'<p class="print-summary">'+money(c.oldTotal)+' → '+money(c.newTotal)+'; изменение '+signMoney(c.delta)+' ('+(c.change===null?'процент не определён: база равна нулю':pct(c.change))+').</p><p>Применённые скидки: '+esc(state.case.oldDiscount)+'% / '+esc(state.case.newDiscount)+'%.</p><table><thead><tr><th>Группа / источник</th><th>Кол-во</th><th>Старая, ₽/ед.</th><th>Новая, ₽/ед.</th><th>Δ строки</th></tr></thead><tbody>'+reportRows(c,true)+'</tbody></table>':'<p><b>Достоверный числовой итог пока не сформирован.</b></p>')+
+ (c.issues.length?'<ul>'+c.issues.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'')+
+ (c.allZero?'<p><b>Объём корзины равен нулю. Суммы не дают основания для финансового вывода.</b></p>':'')+
+ '<h2>3. Область и ограничения</h2>'+limitsHtml(c)+
+ '<h2>4. Неценовые условия</h2><p><b>'+esc(payment.title)+'.</b> '+esc(payment.body)+'</p>'+
+ '<h2>5. Переговорный сценарий</h2>'+
+ (scenario?'<p>Гипотеза команды: скидка '+esc(state.scenario.discount)+'% на новый сопоставимый набор. Стоимость '+money(scenario.total)+'. Разница с предложением: '+signMoney(scenario.againstNew)+'; с действующими условиями: '+signMoney(scenario.againstOld)+'.</p><p><b>С клиникой не согласовано. Не является достигнутой экономией.</b></p>':state.scenario.enabled?'<p>Сценарий включён, но не рассчитан: проверьте скидку и исходные данные.</p>':'<p>Не включён.</p>')+
+ '<h2>6. Вопросы для обсуждения</h2><ol><li>Можно ли сохранить отсрочку '+esc(state.case.oldDays)+' календарных дней с получения счёта?</li><li>Уточнить состав гигиены: вся полость рта или сегмент; подтвердить одинаковый объём.</li><li>Какую скидку можно согласовать на сопоставимый набор и на каких условиях?</li></ol>'+
+ '<h2>7. Исходные строки демопрайсов</h2><p class="print-meta">Цены до скидок. Все строки сохранены, включая исключённые. Подготовка данных — вручную.</p><table><thead><tr><th>Строка</th><th>Прайс A · версия 1</th><th>Прайс B · версия 1</th></tr></thead><tbody>'+sourceRows+'</tbody></table>'+
+ '<div class="print-foot">Статус: '+status+' · v'+state.revision+'. Разбор не оценивает качество лечения, не гарантирует экономию и не выбирает клинику автоматически. Решение о договоре принимает страховщик.</div>';
+}
+function printNow(){closeModal();$('#print-report').innerHTML=makePrintReport();window.print();}
+function askPrint(){
+ if(reviewed()){printNow();return;}
+ modalContext={type:'print'};
+ openModal('Результат ещё не проверен','<p>Можно распечатать текущую версию с заметной отметкой «Черновик» или сначала завершить независимую сверку.</p><p class="help-box">Печать сама по себе не означает проверку или публикацию согласованного разбора.</p>','<button class="btn" data-action="print-draft">Печатать черновик</button><button class="btn primary" data-action="review">Перейти к проверке</button>');
+}
+function showHelp(){
+ modalContext={type:'help'};
+ openModal('Демо за 4–5 минут','<ol class="list-question"><li>Откройте задачу: два вымышленных прайса, скидки 10% / 12%, отсрочка 30 / 15 дней.</li><li>На сопоставлении подтвердите пять одинаковых услуг. Исключите гигиену с объяснением разного объёма.</li><li>Откройте разбор: 698 400 → 726 000 ₽; +27 600 ₽; +3,95%. Обратите внимание на сокращение отсрочки.</li><li>Включите сценарий скидки 15%: 701 250 ₽, на 2 850 ₽ выше старых условий. Это гипотеза, не согласованная скидка.</li><li>Выполните проверку другим участником и распечатайте отчёт. Назовите ручные операции.</li></ol><div class="notice" style="margin-top:18px">'+icon('info')+'<span>Показ подтверждает работоспособность расчёта. Спрос, готовность платить и точность на настоящих прайсах ещё не проверены.</span></div>','<button class="btn primary" data-action="close-modal">Понятно</button>');
+}
+document.addEventListener('click',function(event){
+ const b=event.target.closest('button');if(!b||b.disabled)return;
+ const action=b.dataset.action,id=b.dataset.id;
+ if(b.dataset.screen){setScreen(Number(b.dataset.screen));return;}
+ if(b.dataset.filter){filter=b.dataset.filter;render();return;}
+ if(action==='close-modal'){closeModal();return;}
+ if(action==='source'){sourceModal(b.dataset.side,id);return;}
+ if(action==='help'){showHelp();return;}
+ if(action==='start'){
+  const errors=[];if(percentBp(state.case.oldDiscount)===null||percentBp(state.case.newDiscount)===null)errors.push('Скидки должны быть от 0 до 100%.');
+  if(days(state.case.oldDays)===null||days(state.case.newDays)===null)errors.push('Укажите отсрочку целыми днями от 0 до 365.');
+  if(!state.case.author.trim())errors.push('Укажите имя автора.');
+  if(errors.length){toast(errors.join(' '));const invalid=document.querySelector('[data-case][aria-invalid=true]');if(invalid)invalid.focus();return;}
+  setScreen(2);return;
+ }
+ if(action==='confirm'){
+  const r=ROWS.find(r=>r.id===id);if(!r?.compatible)return;
+  state.selections[id]={status:'confirmed',reason:''};changed();render();toast('Услуга подтверждена. Расчёт обновлён.');return;
+ }
+ if(action==='confirm-all'){
+  let count=0;for(const r of ROWS)if(r.compatible&&state.selections[r.id].status==='pending'){state.selections[r.id]={status:'confirmed',reason:''};count++;}
+  if(count){changed();render();toast('Подтверждено групп: '+count+'. Неоднозначная услуга остаётся без решения.');}return;
+ }
+ if(action==='exclude'){excludeModal(id);return;}
+ if(action==='save-exclude'){
+  const reason=$('#exclude-reason')?.value.trim();if(!reason){$('#exclude-error').textContent='Укажите причину исключения.';$('#exclude-reason').focus();return;}
+  const rowId=modalContext?.id;if(!rowId)return;
+  state.selections[rowId]={status:'excluded',reason};changed();closeModal();render();toast('Услуга исключена и останется видимой в отчёте.');return;
+ }
+ if(action==='reopen'){state.selections[id]={status:'pending',reason:''};changed();render();toast('Соответствие возвращено на рассмотрение.');return;}
+ if(action==='review'){reviewModal();return;}
+ if(action==='review-back'){closeModal();setScreen(2);return;}
+ if(action==='save-review'){
+  const name=$('#reviewer-name')?.value.trim()||'';
+  const normalized=s=>s.normalize('NFKC').trim().replace(/\s+/g,' ').toLocaleLowerCase('ru-RU');
+  const checked=Array.from(document.querySelectorAll('[data-review-check]')).every(x=>x.checked);
+  const error=!name?'Укажите имя проверяющего.':normalized(name)===normalized(state.case.author)?'Проверяющий должен отличаться от автора.':!checked?'Отметьте все пункты после фактической сверки.':'';
+  if(error){$('#review-error').textContent=error;return;}
+  if(reviewProblems(calculate(state)).length){reviewModal();return;}
+  state.review={revision:state.revision,name,at:Date.now()};save();closeModal();render();toast('Проверка отмечена для текущей демоверсии.');return;
+ }
+ if(action==='print'){askPrint();return;}
+ if(action==='print-draft'){printNow();return;}
+ if(action==='reset'){
+  modalContext={type:'reset'};
+  openModal('Начать демо заново?','<p>Статусы услуг, количества, сценарий и отметка проверки вернутся к исходным значениям. Оба встроенных демопрайса сохранятся.</p>','<button class="btn" data-action="close-modal">Продолжить работу</button><button class="btn primary" data-action="do-reset">Начать заново</button>');return;
+ }
+ if(action==='do-reset'){state=freshState();filter='all';closeModal();save();render();window.scrollTo(0,0);toast('Открыт исходный демопример.');return;}
+});
+document.addEventListener('input',function(event){
+ const input=event.target;
+ if(input.dataset.case){
+  const k=input.dataset.case;if(!Object.prototype.hasOwnProperty.call(state.case,k)||state.case[k]===input.value)return;
+  state.case[k]=input.value;
+  const invalid=k.includes('Discount')?percentBp(input.value)===null:k.includes('Days')?days(input.value)===null:!input.value.trim();
+  input.setAttribute('aria-invalid',String(invalid));changed();return;
+ }
+ if(input.dataset.qty){
+  const id=input.dataset.qty;if(!Object.prototype.hasOwnProperty.call(state.quantities,id))return;
+  if(state.quantities[id]===input.value)return;
+  state.quantities[id]=input.value;changed();updateMappingSummary();return;
+ }
+ if(input.id==='scenario-range'||input.id==='scenario-discount'){
+  if(state.scenario.discount===input.value)return;
+  state.scenario.discount=input.value;changed();
+  if(input.id==='scenario-range')$('#scenario-discount').value=input.value;
+  else if(percentBp(input.value)!==null)$('#scenario-range').value=String(percentBp(input.value)/100);
+  updateScenario();return;
+ }
+});
+document.addEventListener('change',function(event){
+ if(event.target.id==='scenario-enabled'){state.scenario.enabled=event.target.checked;changed();updateScenario();}
+});
+window.addEventListener('beforeprint',()=>{$('#print-report').innerHTML=makePrintReport();});
+$('#modal').addEventListener('cancel',()=>{modalContext=null;});
+window.DMSDemo=Object.freeze({getState:()=>JSON.parse(JSON.stringify(state)),calculate:()=>calculate(state),version:'1.0'});
+restore();render();
+})();
+</script></body></html>
