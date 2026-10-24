@@ -51,6 +51,13 @@ details.more { margin-top: 18px; background: var(--panel); border: 1px solid var
 details.more summary { cursor: pointer; font-weight: 600; }
 details.more li { font-size: 14px; margin: 6px 0; overflow-wrap: anywhere; }
 .foot { font-size: 13px; color: var(--muted); margin-top: 24px; max-width: 75ch; }
+.rate { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.rate iframe { width: 150px; height: 50px; border: 0; border-radius: 8px; background: #fff; }
+.btn { font: inherit; font-size: 14px; color: var(--acc-ink); background: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+dialog.rev { border: 0; border-radius: 14px; padding: 0; width: min(560px, calc(100vw - 32px)); background: var(--panel); color: var(--ink); }
+dialog.rev::backdrop { background: rgba(10, 22, 40, .55); }
+dialog.rev .bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; font-size: 14px; }
+dialog.rev iframe { display: block; width: 100%; height: min(700px, calc(100vh - 120px)); border: 0; background: #fff; }
 .empty { color: var(--muted); padding: 12px 0; }
 </style>
 </head>
@@ -85,6 +92,7 @@ details.more li { font-size: 14px; margin: 6px 0; overflow-wrap: anywhere; }
 
   <p class="foot" id="foot"></p>
 </div>
+<dialog class="rev" id="rev"><div class="bar"><b id="rev-title"></b><button class="btn" id="rev-close">Закрыть</button></div><iframe id="rev-frame" title="Отзывы на Яндекс Картах" loading="lazy"></iframe></dialog>
 <script>
 (function () {
   var state = { c: 0, mode: 'visit', metro: '' }, data = null;
@@ -143,6 +151,18 @@ details.more li { font-size: 14px; margin: 6px 0; overflow-wrap: anywhere; }
       if (v != null && (i.status === 'от' || (key === 'visit' && i.visit_from))) price = 'от ' + price;
       row.append(el('span', 'name', i.clinic), el('span', 'price', price));
       card.append(row);
+      if (i.ya) {   // официальные виджеты Яндекса: бейдж с цифрой рейтинга и окно с отзывами, данные грузятся с Яндекса
+        var rate = el('div', 'rate'), fr = document.createElement('iframe');
+        fr.src = 'https://yandex.ru/sprav/widget/rating-badge/' + encodeURIComponent(i.ya) + '?type=rating';
+        fr.title = 'Рейтинг организации в Яндексе'; fr.loading = 'lazy';
+        var b = el('button', 'btn', 'Отзывы');
+        b.onclick = function () {
+          $('rev-title').textContent = i.clinic;
+          $('rev-frame').src = 'https://yandex.ru/maps-reviews-widget/' + encodeURIComponent(i.ya) + '?comments';
+          $('rev').showModal();
+        };
+        rate.append(fr, b); card.append(rate);
+      }
       var where = [i.address, i.metro.length ? 'м. ' + i.metro.join(', ') : '', i.branches > 1 ? 'филиалов в базе: ' + i.branches : ''].filter(Boolean).join(' · ');
       if (where) card.append(el('div', 'where', where));
       var parts = el('div', 'parts');
@@ -156,7 +176,7 @@ details.more li { font-size: 14px; margin: 6px 0; overflow-wrap: anywhere; }
       var links = el('div', 'links');
       var a1 = el('a', '', 'Прайс на сайте клиники, снимок ' + date(i.snapshot)); a1.href = i.doc_url; a1.target = '_blank'; a1.rel = 'noopener';
       var a2 = el('a', '', 'Отзывы на Яндекс Картах'); a2.href = i.maps; a2.target = '_blank'; a2.rel = 'noopener';
-      links.append(a1, a2); card.append(links);
+      links.append(a1); if (!i.ya) links.append(a2); card.append(links);
       list.append(card);
     });
     var dis = c.items.filter(function (i) { return i.status === 'спорно' && (!state.metro || i.metro.indexOf(state.metro) >= 0); });
@@ -168,6 +188,7 @@ details.more li { font-size: 14px; margin: 6px 0; overflow-wrap: anywhere; }
       var a = el('a', '', 'прайс'); a.href = i.doc_url; a.target = '_blank'; a.rel = 'noopener'; li.append(a); ul.append(li);
     });
   }
+  $('rev-close').onclick = function () { $('rev').close(); $('rev-frame').src = 'about:blank'; };
   $('m-visit').onclick = function () { state.mode = 'visit'; render(); };
   $('m-fill').onclick = function () { state.mode = 'fill'; render(); };
   fetch('data.json').then(function (r) { return r.json(); }).then(function (j) {
