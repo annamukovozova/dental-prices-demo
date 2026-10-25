@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Сверка договорного прайса</title>
+<style>
+/* Макет сверки договорного прайса с публичным (МЕТОДИКА 18.2): главное — файл не покидает компьютер пользователя. */
+:root { color-scheme: light; --bg: #F4F6F8; --panel: #FFFFFF; --ink: #0A1628; --muted: #4A5868; --line: #D5DDE4; --acc: #1FA89A; --acc-ink: #0E6F66; --soft: #E3F4F1;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+@media (prefers-color-scheme: dark) { :root { color-scheme: dark; --bg: #0B1420; --panel: #121E2C; --ink: #E6EDF3; --muted: #9AABBC; --line: #24364A; --acc: #3CC4B5; --acc-ink: #7FE0D4; --soft: #12302D; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.55; }
+.wrap { max-width: 860px; margin: 0 auto; padding: 20px 16px 48px; }
+.top { font-size: 13px; color: var(--muted); } .top a { color: inherit; }
+h1 { font-size: clamp(26px, 5vw, 32px); margin: 10px 0 8px; } h2 { font-size: 18px; margin: 0 0 8px; }
+.privacy { background: var(--soft); border-radius: 12px; padding: 16px 18px; margin: 14px 0 18px; font-size: 17px; }
+.privacy b { display: block; font-size: 19px; margin-bottom: 4px; }
+.steps { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); margin-bottom: 18px; }
+.step { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.step .n { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--acc); color: #fff; font-weight: 700; margin-bottom: 6px; }
+.step p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+.drop { border: 2px dashed var(--line); border-radius: 12px; padding: 28px 16px; text-align: center; color: var(--muted); background: var(--panel); margin-bottom: 18px; }
+.drop b { color: var(--ink); }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; } th, td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; } th { color: var(--muted); }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; } .hl { color: #C2410C; font-weight: 600; }
+.tbl { overflow-x: auto; } .muted { color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body><div class="wrap">
+<p class="top"><a href="../">← кабинет для бизнеса</a> · макет, в разработке</p>
+<h1>Сверка договорного прайса с публичным</h1>
+<div class="privacy"><b>Ваш файл не покидает компьютер.</b>Сравнение идёт внутри браузера, на наш сервер ничего не отправляется. Публичный прайс клиники страница берёт из нашей базы, это открытые данные. Код страницы открыт: служба безопасности может проверить, что запросов наружу нет. Страницу можно сохранить и открывать без интернета.</div>
+<div class="steps">
+<div class="step"><span class="n">1</span><b>Выберите клинику</b><p>Публичный прайс подтянется из базы с датой и ссылкой на сайт клиники.</p></div>
+<div class="step"><span class="n">2</span><b>Перетащите свой Excel</b><p>Колонки кода, наименования и цены определятся сами. Если нет — один вопрос: «какая колонка цена?».</p></div>
+<div class="step"><span class="n">3</span><b>Получите сверку</b><p>Совпавшие строки, разница в рублях и процентах, строки, где договорная цена выше розничной. Выгрузка в Excel на ваш компьютер.</p></div>
+</div>
+<div class="drop"><b>Перетащите сюда договорной прайс (Excel или CSV)</b><br>В демо загрузка выключена: страница показывает, как будет устроена сверка.</div>
+<div class="card">
+<h2>Как будет выглядеть результат (пример на вымышленных цифрах)</h2>
+<div class="tbl"><table>
+<thead><tr><th>Услуга</th><th>Как сопоставлено</th><th class="n">Договор, ₽</th><th class="n">Сайт клиники, ₽</th><th class="n">Разница</th></tr></thead>
+<tbody>
+<tr><td>Пломба светового отверждения, 1 поверхность</td><td>код и наименование</td><td class="n">4 200</td><td class="n">4 000</td><td class="n hl">+5,0%</td></tr>
+<tr><td>Анестезия инфильтрационная</td><td>наименование</td><td class="n">900</td><td class="n">1 000</td><td class="n">−10,0%</td></tr>
+<tr><td>Удаление зуба простое</td><td>код совпал, наименование другое — на проверку</td><td class="n">3 500</td><td class="n">—</td><td class="n">—</td></tr>
+<tr><td>Профессиональная гигиена</td><td>нет в публичном прайсе</td><td class="n">7 800</td><td class="n">—</td><td class="n">—</td></tr>
+</tbody></table></div>
+<p class="muted">Итог считается только по сопоставленным строкам: сколько строк совпало, в скольких договорная цена выше розничной, медиана разницы по группам услуг. Если публичный прайс старше 12 месяцев, над результатом будет предупреждение.</p>
+</div>
+<div class="card"><h2>Если внешние страницы открывать нельзя</h2><p class="muted" style="margin:0">Скачайте публичный прайс клиники в Excel в стандартных колонках и шаблон сверки с готовыми формулами: вставьте свой прайс на соседний лист, формулы посчитают сами. Скоро.</p></div>
+</div></body></html>
