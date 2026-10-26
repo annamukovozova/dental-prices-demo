@@ -45,6 +45,11 @@ td.n, th.n { text-align: right; white-space: nowrap; font-variant-numeric: tabul
 .soon { font-size: 14px; color: var(--muted); }
 .soon li { margin: 4px 0; }
 .foot { font-size: 13px; color: var(--muted); margin-top: 20px; max-width: 80ch; }
+.muted { color: var(--muted); font-size: 14px; }
+details.card summary { cursor: pointer; }
+.weights { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); margin-top: 12px; }
+.weights label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+.wtag { font-size: 13px; color: var(--acc-ink); }
 a { color: var(--acc-ink); }
 @media (max-width: 560px) { .bar { grid-template-columns: 1fr 5.5rem; } .bar .track { grid-column: 1 / -1; grid-row: 2; } }
 @media print { body { background: #fff; } .pick .btn, .top, .noprint { display: none !important; } .card { break-inside: avoid; border-color: #ccc; } }
@@ -60,8 +65,15 @@ a { color: var(--acc-ink); }
     <label>Клиника<select id="clinic"></select></label>
     <label style="flex:0 1 200px">Процент из письма клиники<input id="asked" type="text" inputmode="decimal" placeholder="например, 15"></label>
     <button class="btn" id="print">Сохранить в PDF</button>
-    <button class="btn" id="csv">Строки в Excel (CSV)</button>
+    <button class="btn" id="csv">Все пары строк в Excel</button>
   </div>
+
+  <details class="card noprint" id="wbox">
+    <summary><b>Пересчитать с вашими весами услуг</b> <span class="muted">— расчёт идёт в браузере, веса никуда не отправляются</span></summary>
+    <div class="weights" id="weights"></div>
+    <p class="muted" style="margin:8px 0 0">По умолчанию — веса корзины Росстата по Москве. Если у клиники нет какой-то позиции, веса остальных пересчитываются к 100%. Рынок тоже пересчитывается по вашим весам.</p>
+    <button class="btn" id="wreset" style="margin-top:8px">Вернуть веса Росстата</button>
+  </details>
 
   <div class="card">
     <div class="kpis" id="kpis"></div>
@@ -88,6 +100,11 @@ a { color: var(--acc-ink); }
     <div class="tbl"><table id="lines"><thead><tr><th>Услуга, как в прайсе</th><th class="n">Год назад, ₽</th><th class="n">Сейчас, ₽</th><th class="n">Рост</th><th>Прайс</th></tr></thead><tbody></tbody></table></div>
   </div>
 
+  <div class="card">
+    <h2>Ограничения</h2>
+    <ul class="soon" id="limits"></ul>
+  </div>
+
   <div class="card noprint">
     <h2>Скоро в справке</h2>
     <ul class="soon">
@@ -111,13 +128,41 @@ a { color: var(--acc-ink); }
   function cur() { return D.clinics.find(function (c) { return c.org === $('clinic').value; }) || D.clinics[0]; }
   function asked() { var v = fnum($('asked').value); return isNaN(v) ? null : v / 100; }
 
+  // Веса услуг: по умолчанию корзина Росстата по Москве; пользователь может задать свои (только в браузере)
+  var POS = ['коронка', 'пломба', 'протез', 'удаление', 'осмотр'];
+  var W0 = { 'коронка': 31.3, 'пломба': 26.1, 'протез': 21.2, 'удаление': 17.0, 'осмотр': 4.4 }, W = Object.assign({}, W0);
+  var custom = function () { return POS.some(function (n) { return Math.abs(W[n] - W0[n]) > 1e-9; }); };
+  function idxOf(c) {
+    var s = 0, sw = 0;
+    POS.forEach(function (n) { var g = c.pos[n].g; if (g != null && W[n] > 0) { s += W[n] * g; sw += W[n]; } });
+    return sw ? s / sw : null;
+  }
+  function median(v) { v = v.slice().sort(function (a, b) { return a - b; }); var n = v.length; return n ? (n % 2 ? v[(n - 1) / 2] : (v[n / 2 - 1] + v[n / 2]) / 2) : null; }
+  function marketNow() {
+    if (!custom()) return D.market;
+    var v = D.clinics.filter(function (c) { return c.in_market === 'да'; }).map(idxOf).filter(function (x) { return x != null; });
+    return Object.assign({}, D.market, { median: median(v), n: v.length,
+      below7: v.filter(function (x) { return x < 0.07; }).length, below10: v.filter(function (x) { return x < 0.10; }).length });
+  }
+  function drawWeights() {
+    var box = $('weights'); box.replaceChildren();
+    POS.forEach(function (n) {
+      var l = el('label', '', n[0].toUpperCase() + n.slice(1) + ', %'), i = document.createElement('input');
+      i.type = 'text'; i.inputMode = 'decimal'; i.value = String(W[n]).replace('.', ',');
+      i.oninput = function () { var v = fnum(i.value); W[n] = isNaN(v) || v < 0 ? 0 : v; render(); };
+      l.append(i); box.append(l);
+    });
+  }
+
   function render() {
-    var c = cur(), m = D.market, a = asked();
+    var c0 = cur(), m = marketNow(), a = asked(), cw = custom();
+    var c = Object.assign({}, c0, { idx_w: cw ? idxOf(c0) : c0.idx_w });
+    var wt = cw ? ' · по вашим весам' : '';
     history.replaceState(null, '', '?c=' + encodeURIComponent(c.org));
     var k = $('kpis'); k.replaceChildren();
     var kpi = function (l, v, s) { var d = el('div', 'kpi'); d.append(el('div', 'l', l), el('div', 'v', v), el('div', 's', s)); k.append(d); };
-    kpi('Рост прайса клиники за год', pct(c.idx_w), 'пять позиций Росстата, веса Москвы');
-    kpi('Рынок Москвы', pct(m.median), 'медиана по ' + m.n + ' клиникам');
+    kpi('Рост прайса клиники за год', pct(c.idx_w), cw ? 'пять позиций Росстата, ваши веса' : 'пять позиций Росстата, веса Москвы');
+    kpi('Рынок Москвы' + wt, pct(m.median), 'медиана по ' + m.n + ' клиникам');
     kpi('Росстат, стоматология, Москва', pct(m.rosstat), 'сентябрь 2026 к сентябрю 2025');
     if (a != null) kpi('Клиника просит', pct(a), 'из письма');
     var note = $('clinic-note'); note.replaceChildren();
@@ -127,9 +172,9 @@ a { color: var(--acc-ink); }
     if (c.idx_w == null) note.append(el('div', 'note', 'По пяти позициям Росстата пар строк нет — рост посчитан только по всему прайсу (см. строки ниже).'));
 
     var rows = [
-      ['Клиника, её прайс за год', c.idx_w, 'var(--warm)'],
+      ['Клиника, её прайс за год' + wt, c.idx_w, 'var(--warm)'],
       a != null ? ['Клиника просит в письме', a, 'var(--navy)'] : null,
-      ['Рынок Москвы, медиана', m.median, 'var(--acc)'],
+      ['Рынок Москвы, медиана' + wt, m.median, 'var(--acc)'],
       ['Росстат, стоматология Москвы', m.rosstat, 'var(--grey)']
     ].filter(Boolean);
     D.forecasts.forEach(function (f, i) {
@@ -170,12 +215,26 @@ a { color: var(--acc-ink); }
   }
 
   $('print').onclick = function () { window.print(); };
+  $('wreset').onclick = function () { W = Object.assign({}, W0); drawWeights(); render(); };
+  // Все пары строк клиники: тот же файл, что у страницы «Рынок и инфляция», загружается по кнопке
+  var allPairs = null;
   $('csv').onclick = function () {
-    var c = cur(), q = function (s) { return '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"'; };
-    var rows = [['клиника', 'группа', 'услуга год назад', 'услуга сейчас', 'цена год назад', 'цена сейчас', 'рост', 'прайс год назад', 'прайс сейчас'].map(q).join(';')];
-    c.lines.forEach(function (l) { rows.push([c.clinic, l.group, l.old, l.new, l.p0, l.p1, (l.ch * 100).toFixed(1).replace('.', ','), l.d0, l.d1].map(q).join(';')); });
-    var blob = new Blob(['﻿' + rows.join('\r\n')], { type: 'text/csv;charset=utf-8' });
-    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'справка-' + c.org + '.csv'; a.click();
+    var c = cur(), btn = $('csv'), q = function (s) { return '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"'; };
+    var save = function (pairs) {
+      var rows = [['клиника', 'группа услуг', 'услуга каталога', 'строка год назад', 'строка сейчас', 'цена год назад, ₽', 'цена сейчас, ₽', 'рост, %',
+        'снимок год назад', 'снимок сейчас', 'прайс год назад', 'прайс сейчас', 'правило сопоставления'].map(q).join(';')];
+      pairs.filter(function (p) { return p.org_key === c.org; }).forEach(function (p) {
+        rows.push([p.clinic, p.group, p.service, p.name_old, p.name_new, p.price_old, p.price_new, (p.change * 100).toFixed(1).replace('.', ','),
+          p.snapshot_old, p.snapshot_new, p.doc_old, p.doc_new, p.rule].map(q).join(';'));
+      });
+      var blob = new Blob(['﻿' + rows.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'пары-строк-' + c.org + '.csv'; a.click();
+      btn.textContent = 'Все пары строк в Excel';
+    };
+    if (allPairs) return save(allPairs);
+    btn.textContent = 'Загружаю…';
+    fetch('../market/data/pairs.json').then(function (r) { return r.json(); }).then(function (j) { allPairs = j; save(j); })
+      .catch(function () { btn.textContent = 'Не удалось загрузить'; });
   };
   fetch('data.json').then(function (r) { return r.json(); }).then(function (j) {
     D = j;
@@ -184,10 +243,17 @@ a { color: var(--acc-ink); }
     var first = j.clinics.find(function (c) { return c.in_market === 'да'; });
     sel.value = want && j.clinics.some(function (c) { return c.org === want; }) ? want : (first || j.clinics[0]).org;
     sel.onchange = render; $('asked').oninput = render;
-    $('foot').textContent = 'Розничные цены из прайсов, которые клиники публикуют на своих сайтах; договорные цены страховщиков здесь не собираются. ' +
-      'Рост — та же строка того же прайса год назад и сейчас; по каждой позиции Росстата берётся медиана, позиции складываются с весами Москвы. ' +
-      'В медиану рынка не идут прайсы без изменений, с низкой сопоставимостью и с изменением меньше 30% строк по позициям Росстата: клиника могла не обновить сайт. ' +
-      'Прогнозы инфляции: Банк России, 23.10.2026; Минэкономразвития, осенний макропрогноз 2026. Росстат: средние цены по Москве, сентябрь 2026 к сентябрю 2025.';
+    drawWeights();
+    var lim = $('limits');
+    ['Цены розничные, из прайсов, которые клиники публикуют на своих сайтах. Договорные цены страховщиков мы не собираем и не знаем: они бывают и ниже, и выше.',
+     'Рост считается только по одинаковым строкам прайса год назад и сейчас: новые, переименованные и объединённые услуги в рост не идут. Скрытый рост через перестройку прайса здесь не виден.',
+     'Клиника могла не обновить прайс на сайте. Прайсы без изменений и прайсы, где по пяти позициям Росстата изменилось меньше 30% строк, в медиану рынка не входят.',
+     'Сейчас рост посчитан у ' + j.market.with_history + ' клиник Москвы, в медиане рынка — ' + j.market.n + '. Медиана по позиции, где клиник меньше 10, ориентировочная.',
+     'Веса пяти позиций по умолчанию — корзина Росстата по Москве на 2026 год. Статистики, как часто оказывают каждую услугу, в открытом доступе нет; свои веса можно задать выше.',
+     'Прогнозы ЦБ и Минэкономразвития — по общей инфляции, не по медицине.'
+    ].forEach(function (t) { lim.append(el('li', '', t)); });
+    $('foot').textContent = 'Источники: прайсы на сайтах клиник (даты снимков указаны у клиники); Росстат — средние цены по Москве, сентябрь 2026 к сентябрю 2025; ' +
+      'Банк России — прогноз от 23.10.2026; Минэкономразвития — осенний макропрогноз 2026.';
     render();
   }).catch(function () { $('kpis').textContent = 'Не удалось загрузить данные.'; });
 })();
