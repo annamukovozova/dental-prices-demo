@@ -81,6 +81,12 @@ a { color: var(--acc-ink); }
   </div>
 
   <div class="card">
+    <h2>Уровень цен клиники сейчас</h2>
+    <p class="argument" id="level-text"></p>
+    <div class="tbl"><table id="level"><thead><tr><th>Случай лечения</th><th class="n">Клиника, ₽</th><th class="n">Медиана Москвы, ₽</th><th class="n">Клиника к медиане</th></tr></thead><tbody></tbody></table></div>
+  </div>
+
+  <div class="card">
     <h2>С чем сравнить</h2>
     <div class="bars" id="bars"></div>
   </div>
@@ -108,7 +114,8 @@ a { color: var(--acc-ink); }
   <div class="card noprint">
     <h2>Скоро в справке</h2>
     <ul class="soon">
-      <li>Рост цен клиник того же округа и той же ценовой категории.</li>
+      <li>Рост цен клиник того же округа.</li>
+      <li>Справка по Санкт-Петербургу, Ростову-на-Дону и Уфе: витрина цен там уже есть, для роста цен нужно больше клиник с прайсом годичной давности и Росстат по региону.</li>
       <li>Уведомление, когда клиника обновит прайс на сайте, и фактический рост против процента из письма.</li>
       <li>Сверка вашего договорного прайса с публичным: файл не покидает ваш компьютер (<a href="../compare/">как это устроено</a>).</li>
     </ul>
@@ -154,6 +161,24 @@ a { color: var(--acc-ink); }
     });
   }
 
+  function catMed(c) {   // МЕТОДИКА §18.1, п. 2: рост цен клиник той же ценовой категории
+    if (!c.level || !c.level.cat) return null;
+    var v = D.clinics.filter(function (x) { return x.in_market === 'да' && x.level && x.level.cat === c.level.cat; }).map(idxOf).filter(function (x) { return x != null; });
+    return v.length >= 5 ? { median: median(v), n: v.length } : null;
+  }
+  function drawLevel(c) {   // МЕТОДИКА §18.1, п. 1: где клиника сейчас относительно рынка, по ценам случаев витрины
+    var L = c.level || { rows: [] }, t = $('level-text'), tb = $('level').querySelector('tbody'); tb.replaceChildren();
+    var x100 = function (r) { return Math.round(r * 100) + '%'; };
+    t.textContent = L.cat
+      ? 'Ценовая категория клиники — «' + L.cat + '»: её цены в среднем ' + x100(L.ratio) + ' от медианы Москвы по ' + L.rows.length +
+        ' случаям лечения. Эконом — ниже 85%, средний — 85–115%, выше среднего — 115–150%, премиум — выше 150%.'
+      : 'Цены клиники удалось отнести к ' + L.rows.length + ' случаям лечения, для ценовой категории нужно не меньше трёх.';
+    L.rows.slice().sort(function (a, b) { return b.ratio - a.ratio; }).forEach(function (r) {
+      var tr = el('tr');
+      [r.case, rub(r.price), rub(r.median), x100(r.ratio)].forEach(function (v, i) { tr.append(el('td', i ? 'n' + (i === 3 && r.ratio > 1.15 ? ' up' : '') : '', v)); });
+      tb.append(tr);
+    });
+  }
   function render() {
     var c0 = cur(), m = marketNow(), a = asked(), cw = custom();
     var c = Object.assign({}, c0, { idx_w: cw ? idxOf(c0) : c0.idx_w });
@@ -175,6 +200,7 @@ a { color: var(--acc-ink); }
       ['Клиника, её прайс за год' + wt, c.idx_w, 'var(--warm)'],
       a != null ? ['Клиника просит в письме', a, 'var(--navy)'] : null,
       ['Рынок Москвы, медиана' + wt, m.median, 'var(--acc)'],
+      catMed(c) ? ['Клиники той же ценовой категории («' + c.level.cat + '»), медиана по ' + catMed(c).n, catMed(c).median, 'var(--acc)'] : null,
       ['Росстат, стоматология Москвы', m.rosstat, 'var(--grey)']
     ].filter(Boolean);
     D.forecasts.forEach(function (f, i) {
@@ -195,6 +221,7 @@ a { color: var(--acc-ink); }
     if (c.idx_w != null) arg += ' Свой публичный прайс за прошлый год клиника подняла на ' + pct(c.idx_w) + '.';
     $('argument').textContent = arg;
 
+    drawLevel(c);
     var tb = $('pos').querySelector('tbody'); tb.replaceChildren();
     ['коронка', 'пломба', 'протез', 'удаление', 'осмотр'].forEach(function (n) {
       var p = c.pos[n], pm = D.pos_market[n], tr = el('tr');
@@ -250,6 +277,7 @@ a { color: var(--acc-ink); }
      'Клиника могла не обновить прайс на сайте. Прайсы без изменений и прайсы, где по пяти позициям Росстата изменилось меньше 30% строк, в медиану рынка не входят.',
      'Сейчас рост посчитан у ' + j.market.with_history + ' клиник Москвы, в медиане рынка — ' + j.market.n + '. Медиана по позиции, где клиник меньше 10, ориентировочная.',
      'Веса пяти позиций по умолчанию — корзина Росстата по Москве на 2026 год. Статистики, как часто оказывают каждую услугу, в открытом доступе нет; свои веса можно задать выше.',
+     'Уровень цен — по случаям лечения с витрины для пациентов (пломба, каналы, коронка, имплант, удаление, протез, брекеты, гигиена): цена клиники к медиане Москвы по тому же случаю. Правила отнесения строк прайса к случаю — в справочнике методики.',
      'Прогнозы ЦБ и Минэкономразвития — по общей инфляции, не по медицине.'
     ].forEach(function (t) { lim.append(el('li', '', t)); });
     $('foot').textContent = 'Источники: прайсы на сайтах клиник (даты снимков указаны у клиники); Росстат — средние цены по Москве, сентябрь 2026 к сентябрю 2025; ' +
