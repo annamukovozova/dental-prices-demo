@@ -22,7 +22,7 @@ h1 { font-size: clamp(26px, 5vw, 34px); line-height: 1.2; margin: 12px 0 6px; te
 .draft { display: inline-block; font-size: 13px; background: var(--warn-soft); color: var(--warn); border-radius: 6px; padding: 3px 10px; margin: 6px 0 18px; }
 .filters { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); margin-bottom: 16px; }
 label.f { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
-select { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; width: 100%; }
+select, input[type=search] { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; width: 100%; }
 .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 14px; }
 .tab { font: inherit; font-size: 15px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
 .tab[aria-pressed="true"] { background: var(--acc); border-color: var(--acc); color: #fff; }
@@ -47,6 +47,10 @@ select { font: inherit; color: var(--ink); background: var(--panel); border: 1px
 .parts .k { color: var(--muted); } .parts .v { color: var(--muted); overflow-wrap: anywhere; } .parts .p { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .links { font-size: 14px; display: flex; gap: 14px; flex-wrap: wrap; } .links a { color: var(--acc-ink); }
 .note { font-size: 13px; color: var(--warn); }
+.gen { font-size: 13px; color: var(--muted); }
+.found { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-top: 12px; }
+.found h3 { font-size: 15px; margin: 0 0 6px; } .found li { font-size: 14px; margin: 6px 0; overflow-wrap: anywhere; } .found a { color: var(--acc-ink); }
+.f-q { grid-column: 1 / -1; }
 details.more { margin-top: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; }
 details.more summary { cursor: pointer; font-weight: 600; }
 details.more li { font-size: 14px; margin: 6px 0; overflow-wrap: anywhere; }
@@ -71,6 +75,7 @@ dialog.rev iframe { display: block; width: 100%; height: min(700px, calc(100vh -
   <div class="filters">
     <label class="f">Город<select id="city"><option>Москва</option><option disabled>Другие города — скоро</option></select></label>
     <label class="f">Метро<select id="metro"><option value="">Все станции</option></select></label>
+    <label class="f f-q">Найдите свою клинику<input id="q" type="search" placeholder="Название или сайт клиники" autocomplete="off"></label>
   </div>
   <div class="tabs" role="group" aria-label="Услуга">
     <button class="tab" aria-pressed="true">Пломба</button>
@@ -88,6 +93,7 @@ dialog.rev iframe { display: block; width: 100%; height: min(700px, calc(100vh -
   </div>
   <div class="summary" id="summary"></div>
   <div class="list" id="list"></div>
+  <div class="found" id="found" hidden><h3></h3><ul></ul></div>
   <details class="more" id="disputed"><summary></summary><ul></ul></details>
 
   <p class="foot" id="foot"></p>
@@ -96,7 +102,12 @@ dialog.rev iframe { display: block; width: 100%; height: min(700px, calc(100vh -
 <dialog class="rev" id="rev"><div class="bar"><b id="rev-title"></b><button class="btn" id="rev-close">Закрыть</button></div><iframe id="rev-frame" title="Отзывы на Яндекс Картах" loading="lazy"></iframe></dialog>
 <script>
 (function () {
-  var state = { c: 0, mode: 'visit', metro: '' }, data = null;
+  var state = { c: 0, mode: 'visit', metro: '', q: '' }, data = null, byOrg = {};
+  var norm = function (t) { return (t || '').toLowerCase().replace(/ё/g, 'е').replace(/["«»'.,]/g, ' ').replace(/\s+/g, ' ').trim(); };
+  var hit = function (i) {   // В8: поиск по названию, юрлицу и сайту
+    if (!state.q) return true; var a = byOrg[i.org] || {};
+    return norm([i.clinic, i.legal, a.site].join(' ')).indexOf(state.q) >= 0;
+  };
   var $ = function (id) { return document.getElementById(id); };
   var el = function (tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
   var rub = function (v) { return Math.round(v).toLocaleString('ru-RU').replace(/,/g, ' ') + ' ₽'; };
@@ -137,14 +148,14 @@ dialog.rev iframe { display: block; width: 100%; height: min(700px, calc(100vh -
     } else {
       s.append(el('div', 'sub', what + c.title.toLowerCase() + ': клиник с ценой ' + st.n + ', для медианы нужно не меньше ' + data.min_median + '. Смотрите список.'));
     }
-    var items = c.items.filter(function (i) { return i.status !== 'спорно' && (!state.metro || i.metro.indexOf(state.metro) >= 0); });
+    var items = c.items.filter(function (i) { return i.status !== 'спорно' && (!state.metro || i.metro.indexOf(state.metro) >= 0) && hit(i); });
     items.sort(function (a, b) {
       var av = a[key], bv = b[key];
       if (av == null && bv == null) return (a.fill || 0) - (b.fill || 0);
       if (av == null) return 1; if (bv == null) return -1; return av - bv;
     });
     var list = $('list'); list.replaceChildren();
-    if (!items.length) list.append(el('p', 'empty', 'У этой станции метро пока нет клиник с ценой для этого случая.'));
+    if (!items.length && !state.q) list.append(el('p', 'empty', 'У этой станции метро пока нет клиник с ценой для этого случая.'));
     items.forEach(function (i) {
       var card = el('div', 'card'), row = el('div', 'row');
       var v = i[key];
@@ -172,6 +183,7 @@ dialog.rev iframe { display: block; width: 100%; height: min(700px, calc(100vh -
       }
       parts.append(part('Пломба', i.fill_lines, i.fill));
       card.append(parts);
+      if (i.general) card.append(el('div', 'gen', 'Одна цена для любой пломбы: клиника не делит пломбы по поверхностям.'));
       if (key === 'visit' && i.visit_note) card.append(el('div', 'note', i.visit_note));
       if (i.status === 'от' || (key === 'visit' && i.visit_from)) card.append(el('div', 'note', 'В прайсе цена «от»: в медиану не идёт.'));
       var links = el('div', 'links');
@@ -180,7 +192,7 @@ dialog.rev iframe { display: block; width: 100%; height: min(700px, calc(100vh -
       links.append(a1); if (!i.ya) links.append(a2); card.append(links);
       list.append(card);
     });
-    var dis = c.items.filter(function (i) { return i.status === 'спорно' && (!state.metro || i.metro.indexOf(state.metro) >= 0); });
+    var dis = c.items.filter(function (i) { return i.status === 'спорно' && (!state.metro || i.metro.indexOf(state.metro) >= 0) && hit(i); });
     var det = $('disputed'); det.hidden = !dis.length;
     det.querySelector('summary').textContent = 'Ещё ' + dis.length + ' клиник: в прайсе несколько вариантов, автоматически цену не выбрать';
     var ul = det.querySelector('ul'); ul.replaceChildren();
@@ -188,12 +200,41 @@ dialog.rev iframe { display: block; width: 100%; height: min(700px, calc(100vh -
       var li = el('li', '', i.clinic + ': ' + i.fill_lines.map(function (l) { return '«' + l.name + '» — ' + rub(l.price); }).join('; ') + ' ');
       var a = el('a', '', 'прайс'); a.href = i.doc_url; a.target = '_blank'; a.rel = 'noopener'; li.append(a); ul.append(li);
     });
+    if (state.q && dis.length) det.open = true;
+    drawFound(c, items, dis);
+  }
+  function drawFound(c, items, dis) {   // В8: клиники из базы, которых нет в списке этого случая, и почему
+    var box = $('found'), ul = box.querySelector('ul'); ul.replaceChildren();
+    if (!state.q) { box.hidden = true; return; }
+    var shown = {}; items.concat(dis).forEach(function (i) { shown[i.org] = 1; });
+    var other = data.all.filter(function (a) { return !shown[a.org] && norm([a.clinic, a.legal, a.site].join(' ')).indexOf(state.q) >= 0; });
+    var inCase = {}; c.items.forEach(function (i) { inCase[i.org] = 1; });
+    other.slice(0, 30).forEach(function (a) {
+      var why = a.why;
+      if (!why && inCase[a.org]) why = 'у этой станции метро клиники нет, выберите «Все станции»';
+      if (!why) {
+        var cs = data.cases.filter(function (x) { return x.items.some(function (i) { return i.org === a.org && i.status !== 'спорно'; }); })
+          .map(function (x) { return '«' + x.title + '»'; });
+        why = cs.length ? 'для этого случая в прайсе нет строки, есть цена для случая ' + cs.join(', ')
+                        : 'в прайсе несколько вариантов пломбы с разными ценами, автоматически цену не выбрать';
+      }
+      var li = el('li', '', a.clinic + (a.site ? ' (' + a.site + ')' : '') + ': ' + why + ' ');
+      if (a.doc_url) { var l = el('a', '', 'прайс'); l.href = a.doc_url; l.target = '_blank'; l.rel = 'noopener'; li.append(l); }
+      ul.append(li);
+    });
+    var n = items.length + dis.length;
+    box.querySelector('h3').textContent = other.length
+      ? (n ? 'Ещё нашлось в базе, но без цены для этого случая:' : 'Клиника есть в нашей базе, но цены для этого случая нет:')
+      : (n ? '' : 'Такой клиники пока нет в нашей базе. Мы собираем прайсы с сайтов клиник и добавляем новые каждую неделю.');
+    box.hidden = !other.length && n > 0;
   }
   $('rev-close').onclick = function () { $('rev').close(); $('rev-frame').src = 'about:blank'; };
   $('m-visit').onclick = function () { state.mode = 'visit'; render(); };
   $('m-fill').onclick = function () { state.mode = 'fill'; render(); };
   fetch('data.json').then(function (r) { return r.json(); }).then(function (j) {
-    data = j;
+    data = j; (j.all || []).forEach(function (a) { byOrg[a.org] = a; }); j.all = j.all || [];
+    $('q').oninput = function () { state.q = norm($('q').value); render(); };
+    try { var q0 = new URLSearchParams(location.search).get('q'); if (q0) { $('q').value = q0; state.q = norm(q0); } } catch (e) {}
     $('foot').textContent = 'Розничные цены из прайсов на сайтах клиник, снимок до ' + date(j.built) + '. Пломба светового отверждения на постоянный зуб у врача без учёной степени и категории. ' +
       'Визит целиком = первичный осмотр стоматолога + инфильтрационная анестезия + пломба; если в прайсе несколько вариантов одной услуги с разными ценами, мы не выбираем самую дешёвую, а выносим клинику в отдельный список. ' +
       'Рейтинг не копируем: ссылка ведёт на карточку клиники в Яндекс Картах.';
