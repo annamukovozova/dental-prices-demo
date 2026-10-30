@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<script>(function(){var ok=false;try{var v=+(localStorage.getItem("biz-auth")||sessionStorage.getItem("biz-auth")||0);ok=Date.now()-v<864e5}catch(e){}if(!ok)location.replace("../login/?next="+encodeURIComponent(location.pathname+location.search))})();</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Разбор письма о повышении цен</title>
+<style>
+/* Разбор письма клиники о повышении цен (SPEC В17): заявленный процент против роста публичного прайса клиники за год,
+   рынка, Росстата и прогнозов инфляции, итог в деньгах по объёму договора. Данные — ../clinic/data.json (tools/build_biz.py). */
+:root { color-scheme: light; --bg: #F4F6F8; --panel: #FFFFFF; --ink: #0A1628; --muted: #4A5868; --line: #D5DDE4; --acc: #1FA89A; --acc-ink: #0E6F66;
+  --soft: #E3F4F1; --up: #B42318; --ok: #0E7A4F; --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+@media (prefers-color-scheme: dark) { :root { color-scheme: dark; --bg: #0B1420; --panel: #121E2C; --ink: #E6EDF3; --muted: #9AABBC; --line: #24364A;
+  --acc: #3CC4B5; --acc-ink: #7FE0D4; --soft: #12302D; --up: #F97066; --ok: #4ADE80; } }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.5; }
+.wrap { max-width: 900px; margin: 0 auto; padding: 20px 16px 48px; }
+.top { font-size: 14px; } a { color: var(--acc-ink); }
+h1 { font-size: clamp(24px, 5vw, 30px); margin: 10px 0 6px; } h2 { font-size: 18px; margin: 22px 0 8px; }
+.lead { color: var(--muted); margin: 0 0 14px; max-width: 75ch; }
+.form { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+label { display: grid; gap: 4px; font-size: 14px; color: var(--muted); }
+input, select { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; }
+.bars { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 8px; }
+.bar { display: grid; grid-template-columns: minmax(150px, 34%) 1fr 70px; gap: 10px; align-items: center; font-size: 14px; }
+.bar .t { height: 14px; background: var(--bg); border-radius: 7px; overflow: hidden; }
+.bar .f { height: 100%; background: var(--acc); border-radius: 7px; }
+.bar.claim .f { background: var(--up); }
+.bar .v { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.verdict { border-radius: 12px; padding: 14px 16px; margin: 12px 0; background: var(--soft); }
+.verdict b { font-size: 18px; display: block; margin-bottom: 4px; }
+table { width: 100%; border-collapse: collapse; background: var(--panel); font-size: 15px; border: 1px solid var(--line); }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+td.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.muted { color: var(--muted); font-size: 14px; }
+.btn { font: inherit; font-weight: 600; background: var(--acc); color: #fff; border: 0; border-radius: 999px; padding: 8px 18px; cursor: pointer; }
+@media print { .top, .form, .btn { display: none !important; } body { background: #fff; } }
+
+.cookie { position: fixed; left: 12px; right: 12px; bottom: 12px; max-width: 640px; margin: 0 auto; background: #fff; color: #0A1628; border: 1px solid #D5DDE4; border-radius: 12px; padding: 10px 14px; font-size: 14px; box-shadow: 0 6px 24px rgba(10,22,40,.15); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; z-index: 10; } .cookie[hidden] { display: none; } .cookie button { font: inherit; background: #1FA89A; color: #fff; border: 0; border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+</style>
+<meta name="yandex-verification" content="b676dfc996e8d02c">
+<script>(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js?id=113938167","ym");ym(113938167,"init",{ssr:true,webvisor:true,clickmap:true,ecommerce:"dataLayer",referrer:document.referrer,url:location.href,accurateTrackBounce:true,trackLinks:true});</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/113938167" style="position:absolute;left:-9999px" alt=""></div></noscript>
+</head>
+<body><div class="wrap">
+<p class="top"><a href="../">← кабинет</a></p>
+<h1>Разбор письма о повышении цен</h1>
+<p class="lead">Клиника прислала письмо: «с 1 января прайс растёт на N%». Выберите клинику и впишите процент: покажем, насколько на самом деле
+выросли её публичные цены за год, что происходит на рынке и сколько это стоит в деньгах по вашему договору.</p>
+<div class="form">
+  <label>Город<select id="city"></select></label>
+  <label>Клиника<input id="q" list="clinics" placeholder="Начните вводить название" autocomplete="off"></label>
+  <datalist id="clinics"></datalist>
+  <label>Заявлено в письме, %<input id="claim" type="number" step="0.1" min="0" placeholder="например, 15"></label>
+  <label>Объём договора в год, ₽<input id="vol" type="number" step="100000" min="0" placeholder="например, 20000000"></label>
+  <label>Веса услуг<select id="w"><option value="dms">корзина ДМС</option><option value="eq">все услуги поровну</option></select></label>
+</div>
+<p class="muted" id="msg"></p>
+<div id="out" hidden>
+  <h2 id="title"></h2>
+  <div class="bars" id="bars"></div>
+  <div class="verdict" id="verdict"></div>
+  <h2>В деньгах</h2>
+  <table id="money"></table>
+  <p class="muted" id="note"></p>
+  <p><button class="btn" onclick="window.print()">Сохранить в PDF</button> &nbsp; <a id="full" href="../clinic/">Полная справка по клинике: строки прайса и уровень цен →</a></p>
+</div>
+</div>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var el = function (t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+  var pct = function (v) { return (v > 0 ? '+' : '') + (v * 100).toFixed(1).replace('.', ',') + '%'; };
+  var pp = function (v) { return (v > 0 ? '+' : '') + (v * 100).toFixed(1).replace('.', ',') + ' п.п.'; };
+  var rub = function (v) { return Math.round(v).toLocaleString('ru-RU') + ' ₽'; };
+  var dt = function (s) { return s ? s.split('-').reverse().join('.') : ''; };
+  var D = null;
+  var city = function () { return $('city').value || 'Москва'; };
+  var inCity = function () { return D.clinics.filter(function (c) { return (c.city || 'Москва') === city(); }); };
+  function list() {
+    var dl = $('clinics'); dl.replaceChildren();
+    inCity().slice().sort(function (a, b) { return a.clinic.localeCompare(b.clinic, 'ru'); }).forEach(function (c) { dl.append(new Option(c.clinic)); });
+    $('msg').textContent = 'Рост за год посчитан для ' + inCity().length + ' клиник (' + city() + '), у которых нашёлся прайс годичной давности.';
+  }
+  fetch('../clinic/data.json').then(function (r) { return r.json(); }).then(function (d) {
+    D = d; var cs = $('city');
+    var cnt = function (k) { return d.clinics.filter(function (c) { return (c.city || 'Москва') === k; }).length; };
+    Object.keys(d.markets || { 'Москва': 1 }).filter(function (k) { return cnt(k) > 0; })
+      .sort(function (a, b) { return (a !== 'Москва') - (b !== 'Москва') || a.localeCompare(b, 'ru'); })
+      .forEach(function (k) { cs.append(new Option(k + ' (' + cnt(k) + ')', k)); });
+    cs.onchange = function () { $('q').value = ''; list(); draw(); };
+    list();
+  });
+  ['q', 'claim', 'vol', 'w'].forEach(function (id) { $(id).oninput = draw; $(id).onchange = draw; });
+
+  function draw() {
+    if (!D) return;
+    var c = inCity().filter(function (x) { return x.clinic === $('q').value; })[0];
+    if (!c) { $('out').hidden = true; return; }
+    var dms = $('w').value === 'dms', claim = parseFloat(String($('claim').value).replace(',', '.')) / 100, vol = parseFloat($('vol').value);
+    var m = city() === 'Москва' ? Object.assign({ terr: 'Москва' }, D.market) : D.markets[city()];
+    var own = dms ? c.idx_dms : c.idx_w, mk = dms ? m.dms : m.median, rs = dms ? m.rosstat_dms : m.rosstat;
+    var few = (dms ? m.dms_n : m.n) < (D.min_market || 5);
+    var terr = (m.terr || city()).replace(/^Город /, '').replace(/ столица.*| город федерального.*/, '');
+    var cb = D.forecasts.filter(function (f) { return f['кто'] === 'Банк России' && f['год'] === (c.new || '').slice(0, 4); })[0];
+    var cbHi = cb ? parseFloat(cb['значение до, %'].replace(',', '.')) / 100 : null;
+    var bad = /^нет/.test(c.in_market || '');
+    $('title').textContent = c.clinic + ': прайс ' + dt(c.old) + ' → ' + dt(c.new);
+    var rows = [];
+    if (!isNaN(claim)) rows.push(['Заявлено в письме', claim, 'claim']);
+    rows.push(['Публичный прайс клиники за год', own, '']);
+    if (!few) rows.push(['Рынок: медиана клиник города (' + (dms ? m.dms_n : m.n) + ')', mk, '']);
+    rows.push(['Росстат, стоматология, ' + terr, rs, '']);
+    if (cbHi != null) rows.push(['Прогноз инфляции Банка России на ' + cb['год'] + ' (верх)', cbHi, '']);
+    if (few) mk = rs;   // в городе мало клиник для медианы рынка — ориентир Росстат по городу или региону
+    var ref = few ? 'Росстата' : 'рынка';
+    var mx = Math.max.apply(null, rows.map(function (r) { return Math.abs(r[1]) || 0; }).concat([0.01]));
+    var bars = $('bars'); bars.replaceChildren();
+    rows.forEach(function (r) {
+      var b = el('div', 'bar ' + r[2]), t = el('div', 't'), f = el('div', 'f');
+      f.style.width = Math.max(1, Math.abs(r[1]) / mx * 100) + '%'; t.append(f);
+      b.append(el('span', '', r[0]), t, el('span', 'v', pct(r[1]))); bars.append(b);
+    });
+    var v = $('verdict'); v.replaceChildren();
+    if (isNaN(claim)) v.append(el('b', '', 'Впишите процент из письма'), 'Сравним его с ростом прайса клиники, рынком и прогнозом инфляции.');
+    else {
+      var over = claim - mk;
+      v.append(el('b', '', over > 0.005 ? 'Заявлено выше ' + ref + ' на ' + pp(over) : 'Заявленное повышение в пределах ' + ref),
+        'Публичные цены клиники за год изменились на ' + pct(own) + (bad ? ' (за год строки прайса не менялись или сайт не обновлялся)' : '') +
+        (few ? '; клиник города с сопоставимым прайсом пока мало, ориентир — Росстат' : ', рынок города — ' + pct(mk)) +
+        ', Росстат (' + terr + ') — ' + pct(rs) + (cbHi != null ? ', прогноз инфляции ЦБ — до ' + pct(cbHi) : '') + '.');
+    }
+    var mt = $('money'); mt.replaceChildren();
+    if (!isNaN(claim) && vol > 0) {
+      var tr = function (a, b) { var r = el('tr'); r.append(el('td', '', a), el('td', 'n', b)); mt.append(r); };
+      tr('Повышение по письму (' + pct(claim) + ')', rub(vol * claim));
+      tr('Если согласовать на уровне ' + ref + ' (' + pct(mk) + ')', rub(vol * Math.max(mk, 0)));
+      if (cbHi != null) tr('Если согласовать на уровне прогноза инфляции ЦБ (' + pct(cbHi) + ')', rub(vol * cbHi));
+      tr('Разница: письмо против ' + ref, rub(vol * (claim - Math.max(mk, 0))));
+      $('note').textContent = 'Оценка в деньгах при том же объёме и структуре услуг по договору.';
+    } else { $('note').textContent = 'Впишите процент из письма и объём договора в год, чтобы увидеть итог в рублях.'; }
+    $('full').href = '../clinic/?c=' + encodeURIComponent(c.org);
+    $('out').hidden = false;
+  }
+})();
+</script>
+<div class="cookie" id="cookie" hidden>Сайт использует cookies и сервисы аналитики Яндекс Метрика, чтобы понимать, какие страницы полезны. <a href="../../konfidencialnost/">Подробнее</a><button id="cookie-ok">Понятно</button></div>
+<script>(function(){var b=document.getElementById('cookie');try{if(localStorage.getItem('cookie-ok'))return;}catch(e){}b.hidden=false;document.getElementById('cookie-ok').onclick=function(){try{localStorage.setItem('cookie-ok','1')}catch(e){}b.hidden=true;};})();</script>
+</body></html>

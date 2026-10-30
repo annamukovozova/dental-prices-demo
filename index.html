@@ -86,11 +86,15 @@ select, input[type=search] { font: inherit; color: var(--ink); background: var(-
 .shown { font-size: 14px; color: var(--muted); padding-bottom: 10px; }
 .empty { color: var(--muted); padding: 12px 0; }
 @media (max-width: 520px) { .parts div { grid-template-columns: 1fr auto; } .parts .v { grid-column: 1 / -1; grid-row: 2; } }
+
+.cookie { position: fixed; left: 12px; right: 12px; bottom: 12px; max-width: 640px; margin: 0 auto; background: #fff; color: #0A1628; border: 1px solid #D5DDE4; border-radius: 12px; padding: 10px 14px; font-size: 14px; box-shadow: 0 6px 24px rgba(10,22,40,.15); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; z-index: 10; } .cookie[hidden] { display: none; } .cookie button { font: inherit; background: #1FA89A; color: #fff; border: 0; border-radius: 999px; padding: 6px 14px; cursor: pointer; }
 </style>
 <link rel="canonical" href="https://zubindex.ru/">
 <meta property="og:url" content="https://zubindex.ru/">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Сколько стоит поставить пломбу в Москве?", "acceptedAnswer": {"@type": "Answer", "text": "По прайсам 171 клиник небольшая пломба стоит в медиане 6 050 ₽, у половины клиник от 4 800 ₽ до 9 100 ₽. Визит целиком с осмотром и анестезией — 7 895 ₽ в медиане."}}, {"@type": "Question", "name": "Сколько стоит имплант под ключ?", "acceptedAnswer": {"@type": "Answer", "text": "В Москве корейский имплант с абатментом и металлокерамической коронкой стоит в медиане 77 080 ₽, премиальный (Straumann, Nobel и подобные) — 116 250 ₽. КТ, костная пластика и синус-лифтинг считаются отдельно."}}, {"@type": "Question", "name": "Сколько стоит лечение каналов и коронка?", "acceptedAnswer": {"@type": "Answer", "text": "Лечение каналов зуба с одним каналом (обработка и пломбирование) в Москве стоит в медиане 6 250 ₽; пломба на зуб, снимки и анестезия отдельно. Металлокерамическая коронка — 20 000 ₽, циркониевая — 35 000 ₽."}}, {"@type": "Question", "name": "Почему в разных клиниках цена отличается в несколько раз?", "acceptedAnswer": {"@type": "Answer", "text": "Клиники по-разному режут прайс на строки, берут разные материалы и платят разную аренду. Мы считаем для всех клиник один и тот же набор услуг, поэтому цифры можно сравнивать между собой. Высокая цена сама по себе не говорит о качестве лечения."}}, {"@type": "Question", "name": "Откуда цены и насколько они свежие?", "acceptedAnswer": {"@type": "Answer", "text": "Из прайсов на сайтах самих клиник: страница цен или файл прейскуранта. Дата снимка — внизу страницы, под каждой ценой есть строки прайса и ссылка на него. Если в прайсе несколько вариантов одной услуги, показываем медиану и диапазон, самый дешёвый вариант не выбираем."}}, {"@type": "Question", "name": "Клиники платят за место в списке?", "acceptedAnswer": {"@type": "Answer", "text": "Нет. Порядок только по цене, клиника не может купить место выше. Оценку и отзывы показывает Яндекс, мы их не храним и не правим."}}, {"@type": "Question", "name": "Я страховщик, брокер или клиника. Что есть для меня?", "acceptedAnswer": {"@type": "Answer", "text": "Кабинет со справкой по клинике к переговорам о ценах: насколько клиника подняла прайс за год против рынка и Росстата и где её цены относительно других клиник. Подробнее о кабинете"}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Сколько стоит поставить пломбу в Москве?", "acceptedAnswer": {"@type": "Answer", "text": "По прайсам 167 клиник небольшая пломба стоит в медиане 6 500 ₽, у половины клиник от 5 000 ₽ до 9 240 ₽. Визит целиком с осмотром и анестезией — 8 150 ₽ в медиане."}}, {"@type": "Question", "name": "Сколько стоит имплант под ключ?", "acceptedAnswer": {"@type": "Answer", "text": "В Москве корейский имплант с абатментом и металлокерамической коронкой стоит в медиане 77 080 ₽, премиальный (Straumann, Nobel и подобные) — 117 000 ₽. КТ, костная пластика и синус-лифтинг считаются отдельно."}}, {"@type": "Question", "name": "Сколько стоит лечение каналов и коронка?", "acceptedAnswer": {"@type": "Answer", "text": "Лечение каналов зуба с одним каналом (обработка и пломбирование) в Москве стоит в медиане 6 350 ₽; пломба на зуб, снимки и анестезия отдельно. Металлокерамическая коронка — 20 000 ₽, циркониевая — 35 000 ₽."}}, {"@type": "Question", "name": "Почему в разных клиниках цена отличается в несколько раз?", "acceptedAnswer": {"@type": "Answer", "text": "Клиники по-разному режут прайс на строки, берут разные материалы и платят разную аренду. Мы считаем для всех клиник один и тот же набор услуг, поэтому цифры можно сравнивать между собой. Высокая цена сама по себе не говорит о качестве лечения."}}, {"@type": "Question", "name": "Откуда цены и насколько они свежие?", "acceptedAnswer": {"@type": "Answer", "text": "Из прайсов на сайтах самих клиник: страница цен или файл прейскуранта. Дата снимка — внизу страницы, под каждой ценой есть строки прайса и ссылка на него. Если в прайсе несколько вариантов одной услуги, показываем медиану и диапазон, самый дешёвый вариант не выбираем."}}, {"@type": "Question", "name": "Клиники платят за место в списке?", "acceptedAnswer": {"@type": "Answer", "text": "Нет. Порядок только по цене, клиника не может купить место выше. Оценку и отзывы показывает Яндекс, мы их не храним и не правим."}}, {"@type": "Question", "name": "Я страховщик, брокер или клиника. Что есть для меня?", "acceptedAnswer": {"@type": "Answer", "text": "Кабинет со справкой по клинике к переговорам о ценах: насколько клиника подняла прайс за год против рынка и Росстата и где её цены относительно других клиник. Подробнее о кабинете"}}]}</script>
 <meta name="yandex-verification" content="b676dfc996e8d02c">
+<script>(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js?id=113938167","ym");ym(113938167,"init",{ssr:true,webvisor:true,clickmap:true,ecommerce:"dataLayer",referrer:document.referrer,url:location.href,accurateTrackBounce:true,trackLinks:true});</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/113938167" style="position:absolute;left:-9999px" alt=""></div></noscript>
 </head>
 <body>
 <div class="wrap">
@@ -111,6 +115,10 @@ select, input[type=search] { font: inherit; color: var(--ink); background: var(-
     <label class="f">Город<select id="city"></select></label>
     <label class="f">Метро<select id="metro"><option value="">Все станции</option></select></label>
     <label class="f f-q">Найдите свою клинику<input id="q" type="search" placeholder="Название или сайт клиники" autocomplete="off"></label>
+  </div>
+  <div class="tabs aud" id="aud" role="group" aria-label="Для кого">
+    <button class="tab" data-aud="adult" aria-pressed="true">Взрослым</button>
+    <button class="tab" data-aud="kids" aria-pressed="false">Детям</button>
   </div>
   <div class="tabs" id="services" role="group" aria-label="Услуга"></div>
   <div class="cases" id="cases" role="group" aria-label="Случай"></div>
@@ -133,7 +141,7 @@ select, input[type=search] { font: inherit; color: var(--ink); background: var(-
 
   <section class="about" id="about">
     <h2>Почему по прайсу клиники не понять, сколько вы заплатите</h2>
-    <p>В прайсе стоматологии сотни строк: осмотр, анестезия, пломба, прокладка, снимок, отдельно каждый этап. Пломба на сайте стоит одну сумму, а в чеке будет другая: в Москве у половины клиник пломба от <span data-k="s1.p25">4 800 ₽</span> до <span data-k="s1.p75">9 100 ₽</span>, а визит целиком с осмотром и анестезией в медиане <span data-k="visit_s1">7 895 ₽</span>. С имплантом так же: «имплант от …» на сайте часто только сам винт, без абатмента и коронки.</p>
+    <p>В прайсе стоматологии сотни строк: осмотр, анестезия, пломба, прокладка, снимок, отдельно каждый этап. Пломба на сайте стоит одну сумму, а в чеке будет другая: в Москве у половины клиник пломба от <span data-k="s1.p25">5 000 ₽</span> до <span data-k="s1.p75">9 240 ₽</span>, а визит целиком с осмотром и анестезией в медиане <span data-k="visit_s1">8 150 ₽</span>. С имплантом так же: «имплант от …» на сайте часто только сам винт, без абатмента и коронки.</p>
     <p>Мы собрали типовые случаи и для каждого сложили строки прайса так, как их сложат в чеке. Можно сравнить клиники по одному и тому же набору услуг:</p>
     <ul class="cases-list">
       <li><b>Пломба</b>: небольшая, между зубами, большая; визит целиком или только пломба.</li>
@@ -155,11 +163,11 @@ select, input[type=search] { font: inherit; color: var(--ink); background: var(-
 
     <h2>Частые вопросы</h2>
     <details class="qa"><summary>Сколько стоит поставить пломбу в Москве?</summary>
-      <p>По прайсам <span data-k="s1.n">171</span> клиник небольшая пломба стоит в медиане <span data-k="s1.median">6 050 ₽</span>, у половины клиник от <span data-k="s1.p25">4 800 ₽</span> до <span data-k="s1.p75">9 100 ₽</span>. Визит целиком с осмотром и анестезией — <span data-k="visit_s1">7 895 ₽</span> в медиане.</p></details>
+      <p>По прайсам <span data-k="s1.n">167</span> клиник небольшая пломба стоит в медиане <span data-k="s1.median">6 500 ₽</span>, у половины клиник от <span data-k="s1.p25">5 000 ₽</span> до <span data-k="s1.p75">9 240 ₽</span>. Визит целиком с осмотром и анестезией — <span data-k="visit_s1">8 150 ₽</span> в медиане.</p></details>
     <details class="qa"><summary>Сколько стоит имплант под ключ?</summary>
-      <p>В Москве корейский имплант с абатментом и металлокерамической коронкой стоит в медиане <span data-k="ko.median">77 080 ₽</span>, премиальный (Straumann, Nobel и подобные) — <span data-k="prem.median">116 250 ₽</span>. КТ, костная пластика и синус-лифтинг считаются отдельно.</p></details>
+      <p>В Москве корейский имплант с абатментом и металлокерамической коронкой стоит в медиане <span data-k="ko.median">77 080 ₽</span>, премиальный (Straumann, Nobel и подобные) — <span data-k="prem.median">117 000 ₽</span>. КТ, костная пластика и синус-лифтинг считаются отдельно.</p></details>
     <details class="qa"><summary>Сколько стоит лечение каналов и коронка?</summary>
-      <p>Лечение каналов зуба с одним каналом (обработка и пломбирование) в Москве стоит в медиане <span data-k="canal1.median">6 250 ₽</span>; пломба на зуб, снимки и анестезия отдельно. Металлокерамическая коронка — <span data-k="mk.median">20 000 ₽</span>, циркониевая — <span data-k="zr.median">35 000 ₽</span>.</p></details>
+      <p>Лечение каналов зуба с одним каналом (обработка и пломбирование) в Москве стоит в медиане <span data-k="canal1.median">6 350 ₽</span>; пломба на зуб, снимки и анестезия отдельно. Металлокерамическая коронка — <span data-k="mk.median">20 000 ₽</span>, циркониевая — <span data-k="zr.median">35 000 ₽</span>.</p></details>
     <details class="qa"><summary>Почему в разных клиниках цена отличается в несколько раз?</summary>
       <p>Клиники по-разному режут прайс на строки, берут разные материалы и платят разную аренду. Мы считаем для всех клиник один и тот же набор услуг, поэтому цифры можно сравнивать между собой. Высокая цена сама по себе не говорит о качестве лечения.</p></details>
     <details class="qa"><summary>Откуда цены и насколько они свежие?</summary>
@@ -176,7 +184,7 @@ select, input[type=search] { font: inherit; color: var(--ink); background: var(-
 <script>
 (function () {
   var PAGE = 20;
-  var state = { city: 'msk', s: 'fill', c: 's1', mode: 'visit', metro: '', q: '', sort: 'asc', pmin: null, pmax: null, shownN: 20, sig: '' }, meta = null, city = null, byOrg = {}, cache = {};
+  var state = { city: 'msk', aud: 'adult', s: 'fill', c: 's1', mode: 'visit', metro: '', q: '', sort: 'asc', pmin: null, pmax: null, shownN: 20, sig: '' }, meta = null, city = null, byOrg = {}, cache = {};
   var $ = function (id) { return document.getElementById(id); };
   var el = function (tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
   var rub = function (v) { return Math.round(v).toLocaleString('ru-RU').replace(/,/g, ' ') + ' ₽'; };
@@ -203,7 +211,8 @@ select, input[type=search] { font: inherit; color: var(--ink); background: var(-
   }
   function drawServices() {
     var box = $('services'); box.replaceChildren();
-    meta.services.forEach(function (x) {
+    document.querySelectorAll('#aud .tab').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-aud') === state.aud)); });
+    meta.services.filter(function (x) { return (x.aud || 'adult') === state.aud; }).forEach(function (x) {
       var b = el('button', 'tab', x.title); b.setAttribute('aria-pressed', String(x.id === state.s));
       b.onclick = function () { state.s = x.id; state.c = x.cases[0].id; state.mode = x.id === 'fill' ? 'visit' : 'price'; render(); };
       box.append(b);
@@ -346,6 +355,13 @@ select, input[type=search] { font: inherit; color: var(--ink); background: var(-
       .catch(function () { $('summary').textContent = 'Не удалось загрузить данные.'; });
   }
   $('more-list').onclick = function () { state.shownN += PAGE; render(); };
+  document.querySelectorAll('#aud .tab').forEach(function (b) {   // SPEC В16: взрослым / детям
+    b.onclick = function () {
+      state.aud = b.getAttribute('data-aud');
+      var s = meta.services.filter(function (x) { return (x.aud || 'adult') === state.aud; })[0];
+      state.s = s.id; state.c = s.cases[0].id; state.mode = s.id === 'fill' ? 'visit' : 'price'; render();
+    };
+  });
   function facts(f) {   // цифры Москвы в тексте страницы; при сборке демо они уже вписаны в HTML
     if (!f) return;
     document.querySelectorAll('[data-k]').forEach(function (e) {
@@ -372,7 +388,7 @@ select, input[type=search] { font: inherit; color: var(--ink); background: var(-
       if (j.cities.some(function (c) { return c.id === u.get('city'); })) state.city = u.get('city');
       var s0 = j.services.filter(function (x) { return x.id === u.get('s'); })[0];
       if (s0) {
-        state.s = s0.id; state.mode = s0.id === 'fill' ? 'visit' : 'price';
+        state.s = s0.id; state.mode = s0.id === 'fill' ? 'visit' : 'price'; state.aud = s0.aud || 'adult';
         state.c = s0.cases.some(function (x) { return x.id === u.get('c'); }) ? u.get('c') : s0.cases[0].id;
       }
       if (q0) { $('q').value = q0; state.q = norm(q0); }
@@ -385,5 +401,7 @@ select, input[type=search] { font: inherit; color: var(--ink); background: var(-
   }).catch(function () { $('summary').textContent = 'Не удалось загрузить данные.'; });
 })();
 </script>
+<div class="cookie" id="cookie" hidden>Сайт использует cookies и сервисы аналитики Яндекс Метрика, чтобы понимать, какие страницы полезны. <a href="konfidencialnost/">Подробнее</a><button id="cookie-ok">Понятно</button></div>
+<script>(function(){var b=document.getElementById('cookie');try{if(localStorage.getItem('cookie-ok'))return;}catch(e){}b.hidden=false;document.getElementById('cookie-ok').onclick=function(){try{localStorage.setItem('cookie-ok','1')}catch(e){}b.hidden=true;};})();</script>
 </body>
 </html>

@@ -54,16 +54,21 @@ details.card summary { cursor: pointer; }
 a { color: var(--acc-ink); }
 @media (max-width: 560px) { .bar { grid-template-columns: 1fr 5.5rem; } .bar .track { grid-column: 1 / -1; grid-row: 2; } }
 @media print { body { background: #fff; } .pick .btn, .top, .noprint { display: none !important; } .card { break-inside: avoid; border-color: #ccc; } }
+
+.cookie { position: fixed; left: 12px; right: 12px; bottom: 12px; max-width: 640px; margin: 0 auto; background: #fff; color: #0A1628; border: 1px solid #D5DDE4; border-radius: 12px; padding: 10px 14px; font-size: 14px; box-shadow: 0 6px 24px rgba(10,22,40,.15); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; z-index: 10; } .cookie[hidden] { display: none; } .cookie button { font: inherit; background: #1FA89A; color: #fff; border: 0; border-radius: 999px; padding: 6px 14px; cursor: pointer; }
 </style>
 <meta name="yandex-verification" content="b676dfc996e8d02c">
+<script>(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js?id=113938167","ym");ym(113938167,"init",{ssr:true,webvisor:true,clickmap:true,ecommerce:"dataLayer",referrer:document.referrer,url:location.href,accurateTrackBounce:true,trackLinks:true});</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/113938167" style="position:absolute;left:-9999px" alt=""></div></noscript>
 </head>
 <body>
 <div class="wrap">
-  <div class="top"><a href="../">← кабинет для бизнеса</a><span>Черновик · публичные розничные цены, не договорные</span></div>
+  <div class="top"><a href="../">← кабинет для бизнеса</a><span>Публичные розничные цены, не договорные</span></div>
   <h1>Справка по клинике</h1>
-  <p class="lead">Пришло письмо о повышении цен? Выберите клинику: справка покажет, как она изменила свой публичный прайс за год, и сравнит с рынком Москвы, Росстатом и прогнозами инфляции.</p>
+  <p class="lead">Пришло письмо о повышении цен? Выберите клинику: справка покажет, как она изменила свой публичный прайс за год, и сравнит с рынком её города, Росстатом и прогнозами инфляции.</p>
 
   <div class="pick">
+    <label style="flex:0 1 220px">Город<select id="city"></select></label>
     <label>Клиника<select id="clinic"></select></label>
     <label style="flex:0 1 200px">Процент из письма клиники<input id="asked" type="text" inputmode="decimal" placeholder="например, 15"></label>
     <button class="btn" id="print">Сохранить в PDF</button>
@@ -85,7 +90,7 @@ a { color: var(--acc-ink); }
   <div class="card">
     <h2>Уровень цен клиники сейчас</h2>
     <p class="argument" id="level-text"></p>
-    <div class="tbl"><table id="level"><thead><tr><th>Случай лечения</th><th class="n">Клиника, ₽</th><th class="n">Медиана Москвы, ₽</th><th class="n">Клиника к медиане</th></tr></thead><tbody></tbody></table></div>
+    <div class="tbl"><table id="level"><thead><tr><th>Случай лечения</th><th class="n">Клиника, ₽</th><th class="n">Медиана города, ₽</th><th class="n">Клиника к медиане</th></tr></thead><tbody></tbody></table></div>
   </div>
 
   <div class="card">
@@ -100,7 +105,7 @@ a { color: var(--acc-ink); }
 
   <div class="card">
     <h2>По позициям Росстата</h2>
-    <div class="tbl"><table id="pos"><thead><tr><th>Позиция</th><th class="n">Клиника</th><th class="n">Пар строк</th><th class="n">Рынок Москвы</th><th class="n">Росстат, Москва</th></tr></thead><tbody></tbody></table></div>
+    <div class="tbl"><table id="pos"><thead><tr><th>Позиция</th><th class="n">Клиника</th><th class="n">Пар строк</th><th class="n">Рынок города</th><th class="n">Росстат</th></tr></thead><tbody></tbody></table></div>
   </div>
 
   <div class="card">
@@ -117,9 +122,7 @@ a { color: var(--acc-ink); }
     <h2>Скоро в справке</h2>
     <ul class="soon">
       <li>Рост цен клиник того же округа.</li>
-      <li>Справка по Санкт-Петербургу, Ростову-на-Дону и Уфе: витрина цен там уже есть, для роста цен нужно больше клиник с прайсом годичной давности и Росстат по региону.</li>
       <li>Уведомление, когда клиника обновит прайс на сайте, и фактический рост против процента из письма.</li>
-      <li>Сверка вашего договорного прайса с публичным: файл не покидает ваш компьютер (<a href="../compare/">как это устроено</a>).</li>
     </ul>
   </div>
 
@@ -134,7 +137,15 @@ a { color: var(--acc-ink); }
   var date = function (s) { return s ? s.slice(8, 10) + '.' + s.slice(5, 7) + '.' + s.slice(0, 4) : '—'; };
   var fnum = function (s) { return parseFloat(String(s).replace(',', '.')); };
 
-  function cur() { return D.clinics.find(function (c) { return c.org === $('clinic').value; }) || D.clinics[0]; }
+  var CITY = 'Москва', IN = { 'Москва': 'Москвы', 'Санкт-Петербург': 'Санкт-Петербурга', 'Ростов-на-Дону': 'Ростова-на-Дону', 'Уфа': 'Уфы',
+    'Казань': 'Казани', 'Екатеринбург': 'Екатеринбурга', 'Новосибирск': 'Новосибирска', 'Краснодар': 'Краснодара', 'Красноярск': 'Красноярска',
+    'Самара': 'Самары', 'Челябинск': 'Челябинска', 'Калининград': 'Калининграда', 'Омск': 'Омска', 'Пермь': 'Перми', 'Тюмень': 'Тюмени',
+    'Хабаровск': 'Хабаровска', 'Владивосток': 'Владивостока', 'Воронеж': 'Воронежа', 'Волгоград': 'Волгограда' };
+  var of = function () { return IN[CITY] || CITY; };
+  var inCity = function () { return D.clinics.filter(function (c) { return (c.city || 'Москва') === CITY; }); };
+  function cur() { return inCity().find(function (c) { return c.org === $('clinic').value; }) || inCity()[0]; }
+  function mBase() { return CITY === 'Москва' ? Object.assign({ terr: 'Москва' }, D.market) : D.markets[CITY]; }
+  function terr() { return (mBase().terr || CITY).replace(/^Город /, '').replace(/ столица.*| город федерального.*/, ''); }
   function asked() { var v = fnum($('asked').value); return isNaN(v) ? null : v / 100; }
 
   // Веса услуг: по умолчанию корзина Росстата по Москве; пользователь может задать свои (только в браузере)
@@ -148,9 +159,9 @@ a { color: var(--acc-ink); }
   }
   function median(v) { v = v.slice().sort(function (a, b) { return a - b; }); var n = v.length; return n ? (n % 2 ? v[(n - 1) / 2] : (v[n / 2 - 1] + v[n / 2]) / 2) : null; }
   function marketNow() {
-    if (!custom()) return D.market;
-    var v = D.clinics.filter(function (c) { return c.in_market === 'да'; }).map(idxOf).filter(function (x) { return x != null; });
-    return Object.assign({}, D.market, { median: median(v), n: v.length,
+    if (!custom()) return mBase();
+    var v = inCity().filter(function (c) { return c.in_market === 'да'; }).map(idxOf).filter(function (x) { return x != null; });
+    return Object.assign({}, mBase(), { median: median(v), n: v.length,
       below7: v.filter(function (x) { return x < 0.07; }).length, below10: v.filter(function (x) { return x < 0.10; }).length });
   }
   function drawWeights() {
@@ -165,14 +176,14 @@ a { color: var(--acc-ink); }
 
   function catMed(c) {   // МЕТОДИКА §18.1, п. 2: рост цен клиник той же ценовой категории
     if (!c.level || !c.level.cat) return null;
-    var v = D.clinics.filter(function (x) { return x.in_market === 'да' && x.level && x.level.cat === c.level.cat; }).map(idxOf).filter(function (x) { return x != null; });
+    var v = inCity().filter(function (x) { return x.in_market === 'да' && x.level && x.level.cat === c.level.cat; }).map(idxOf).filter(function (x) { return x != null; });
     return v.length >= 5 ? { median: median(v), n: v.length } : null;
   }
   function drawLevel(c) {   // МЕТОДИКА §18.1, п. 1: где клиника сейчас относительно рынка, по ценам случаев витрины
     var L = c.level || { rows: [] }, t = $('level-text'), tb = $('level').querySelector('tbody'); tb.replaceChildren();
     var x100 = function (r) { return Math.round(r * 100) + '%'; };
     t.textContent = L.cat
-      ? 'Ценовая категория клиники — «' + L.cat + '»: её цены в среднем ' + x100(L.ratio) + ' от медианы Москвы по ' + L.rows.length +
+      ? 'Ценовая категория клиники — «' + L.cat + '»: её цены в среднем ' + x100(L.ratio) + ' от медианы ' + of() + ' по ' + L.rows.length +
         ' случаям лечения. Эконом — ниже 85%, средний — 85–115%, выше среднего — 115–150%, премиум — выше 150%.'
       : 'Цены клиники удалось отнести к ' + L.rows.length + ' случаям лечения, для ценовой категории нужно не меньше трёх.';
     L.rows.slice().sort(function (a, b) { return b.ratio - a.ratio; }).forEach(function (r) {
@@ -189,8 +200,9 @@ a { color: var(--acc-ink); }
     var k = $('kpis'); k.replaceChildren();
     var kpi = function (l, v, s) { var d = el('div', 'kpi'); d.append(el('div', 'l', l), el('div', 'v', v), el('div', 's', s)); k.append(d); };
     kpi('Рост прайса клиники за год', pct(c.idx_w), cw ? 'пять позиций Росстата, ваши веса' : 'пять позиций Росстата, веса Москвы');
-    kpi('Рынок Москвы' + wt, pct(m.median), 'медиана по ' + m.n + ' клиникам');
-    kpi('Росстат, стоматология, Москва', pct(m.rosstat), 'сентябрь 2026 к сентябрю 2025');
+    var few = m.n < (D.min_market || 5);
+    kpi('Рынок ' + of() + wt, few ? '—' : pct(m.median), few ? 'в медиане ' + m.n + ' клиник, нужно от ' + (D.min_market || 5) : 'медиана по ' + m.n + ' клиникам');
+    kpi('Росстат, стоматология, ' + terr(), pct(m.rosstat), 'сентябрь 2026 к сентябрю 2025');
     if (a != null) kpi('Клиника просит', pct(a), 'из письма');
     var note = $('clinic-note'); note.replaceChildren();
     note.append(el('div', 'soon', 'Прайс на сайте клиники: год назад — ' + date(c.old) + ', сейчас — ' + date(c.new) + '. Сопоставлено пар строк: ' + c.pairs +
@@ -201,9 +213,9 @@ a { color: var(--acc-ink); }
     var rows = [
       ['Клиника, её прайс за год' + wt, c.idx_w, 'var(--warm)'],
       a != null ? ['Клиника просит в письме', a, 'var(--navy)'] : null,
-      ['Рынок Москвы, медиана' + wt, m.median, 'var(--acc)'],
+      few ? null : ['Рынок ' + of() + ', медиана' + wt, m.median, 'var(--acc)'],
       catMed(c) ? ['Клиники той же ценовой категории («' + c.level.cat + '»), медиана по ' + catMed(c).n, catMed(c).median, 'var(--acc)'] : null,
-      ['Росстат, стоматология Москвы', m.rosstat, 'var(--grey)']
+      ['Росстат, стоматология, ' + terr(), m.rosstat, 'var(--grey)']
     ].filter(Boolean);
     D.forecasts.forEach(function (f, i) {
       var lo = fnum(f['значение, %']) / 100, hi = fnum(f['значение до, %']) / 100;
@@ -217,17 +229,19 @@ a { color: var(--acc-ink); }
       d.append(el('span', '', r[0]), tr, el('span', 'val', r[3] || pct(r[1]))); b.append(d);
     });
 
-    var arg = 'Из ' + m.n + ' клиник Москвы с сопоставимым прайсом за год ' + m.below7 + ' подняли цены меньше чем на 7%, ' + m.below10 +
+    var arg = few ? 'Клиник ' + of() + ' с сопоставимым прайсом за год пока мало (' + m.n + '), медиану рынка не показываем. Росстат по стоматологии — ' + pct(m.rosstat) + ', прогноз инфляции на 2027 год у ЦБ и Минэкономразвития — 4%.'
+      : 'Из ' + m.n + ' клиник ' + of() + ' с сопоставимым прайсом за год ' + m.below7 + ' подняли цены меньше чем на 7%, ' + m.below10 +
       ' — меньше чем на 10%. Медиана рынка ' + pct(m.median) + ', прогноз инфляции на 2027 год у ЦБ и Минэкономразвития — 4%.';
-    if (a != null) arg += ' Клиника просит ' + pct(a) + ': это ' + (a > m.median ? 'выше' : 'не выше') + ' медианы рынка на ' + Math.abs((a - m.median) * 100).toFixed(1).replace('.', ',') + ' п. п.';
+    if (a != null && !few) arg += ' Клиника просит ' + pct(a) + ': это ' + (a > m.median ? 'выше' : 'не выше') + ' медианы рынка на ' + Math.abs((a - m.median) * 100).toFixed(1).replace('.', ',') + ' п. п.';
     if (c.idx_w != null) arg += ' Свой публичный прайс за прошлый год клиника подняла на ' + pct(c.idx_w) + '.';
     $('argument').textContent = arg;
 
     drawLevel(c);
     var tb = $('pos').querySelector('tbody'); tb.replaceChildren();
     ['коронка', 'пломба', 'протез', 'удаление', 'осмотр'].forEach(function (n) {
-      var p = c.pos[n], pm = D.pos_market[n], tr = el('tr');
-      [n[0].toUpperCase() + n.slice(1), pct(p.g), String(p.n || '—'), pct(pm.median) + (pm.n ? ' (' + pm.n + ')' : ''), pct(D.rosstat_pos[n])].forEach(function (x, i) { tr.append(el('td', i ? 'n' : '', x)); });
+      var mp = CITY === 'Москва' ? null : ((D.markets[CITY] || {}).pos || {})[n] || {};
+      var p = c.pos[n], pm = mp ? { median: mp.median, n: mp.n } : D.pos_market[n], tr = el('tr');
+      [n[0].toUpperCase() + n.slice(1), pct(p.g), String(p.n || '—'), pct(pm.median) + (pm.n ? ' (' + pm.n + ')' : ''), pct(mp ? mp.ros : D.rosstat_pos[n])].forEach(function (x, i) { tr.append(el('td', i ? 'n' : '', x)); });
       tb.append(tr);
     });
 
@@ -267,26 +281,39 @@ a { color: var(--acc-ink); }
   };
   fetch('data.json').then(function (r) { return r.json(); }).then(function (j) {
     D = j;
-    var sel = $('clinic'), want = new URLSearchParams(location.search).get('c');
-    j.clinics.forEach(function (c) { sel.append(new Option(c.clinic + (c.idx_w != null ? ' · ' + pct(c.idx_w) : '') + (c.in_market === 'да' ? '' : ' · вне медианы'), c.org)); });
-    var first = j.clinics.find(function (c) { return c.in_market === 'да'; });
-    sel.value = want && j.clinics.some(function (c) { return c.org === want; }) ? want : (first || j.clinics[0]).org;
+    var sel = $('clinic'), want = new URLSearchParams(location.search).get('c'), cs = $('city');
+    var wc = j.clinics.find(function (c) { return c.org === want; }); if (wc) CITY = wc.city || 'Москва';
+    var cnt = function (k) { return j.clinics.filter(function (c) { return (c.city || 'Москва') === k; }).length; };
+    Object.keys(j.markets || { 'Москва': 1 }).filter(function (k) { return cnt(k) > 0; })
+      .sort(function (a, b) { return (a !== 'Москва') - (b !== 'Москва') || a.localeCompare(b, 'ru'); })
+      .forEach(function (k) { cs.append(new Option(k + ' (' + cnt(k) + ')', k)); });
+    cs.value = CITY;
+    function fill() {
+      sel.replaceChildren();
+      inCity().forEach(function (c) { sel.append(new Option(c.clinic + (c.idx_w != null ? ' · ' + pct(c.idx_w) : '') + (c.in_market === 'да' ? '' : ' · вне медианы'), c.org)); });
+      var first = inCity().find(function (c) { return c.in_market === 'да'; });
+      sel.value = want && inCity().some(function (c) { return c.org === want; }) ? want : (first || inCity()[0]).org;
+    }
+    fill();
+    cs.onchange = function () { CITY = cs.value; want = null; fill(); render(); };
     sel.onchange = render; $('asked').oninput = render;
     drawWeights();
     var lim = $('limits');
     ['Цены розничные, из прайсов, которые клиники публикуют на своих сайтах. Договорные цены страховщиков мы не собираем и не знаем: они бывают и ниже, и выше.',
      'Рост считается только по одинаковым строкам прайса год назад и сейчас: новые, переименованные и объединённые услуги в рост не идут. Скрытый рост через перестройку прайса здесь не виден.',
      'Клиника могла не обновить прайс на сайте. Прайсы без изменений и прайсы, где по пяти позициям Росстата изменилось меньше 30% строк, в медиану рынка не входят.',
-     'Сейчас рост посчитан у ' + j.market.with_history + ' клиник Москвы, в медиане рынка — ' + j.market.n + '. Медиана по позиции, где клиник меньше 10, ориентировочная.',
+     'Рост посчитан у ' + j.clinics.length + ' клиник с прайсом годичной давности; в Москве в медиане рынка — ' + j.market.n + '. Медиана рынка города — от 5 клиник; медиана по позиции, где клиник меньше 10, ориентировочная.',
      'Веса пяти позиций по умолчанию — корзина Росстата по Москве на 2026 год. Статистики, как часто оказывают каждую услугу, в открытом доступе нет; свои веса можно задать выше.',
-     'Уровень цен — по случаям лечения с витрины для пациентов (пломба, каналы, коронка, имплант, удаление, протез, брекеты, гигиена): цена клиники к медиане Москвы по тому же случаю. Правила отнесения строк прайса к случаю — в справочнике методики.',
+     'Уровень цен — по случаям лечения с витрины для пациентов (пломба, каналы, коронка, имплант, удаление, протез, брекеты, гигиена): цена клиники к медиане её города по тому же случаю. Правила отнесения строк прайса к случаю — в справочнике методики.',
      'Прогнозы ЦБ и Минэкономразвития — по общей инфляции, не по медицине.'
     ].forEach(function (t) { lim.append(el('li', '', t)); });
-    $('foot').textContent = 'Источники: прайсы на сайтах клиник (даты снимков указаны у клиники); Росстат — средние цены по Москве, сентябрь 2026 к сентябрю 2025; ' +
+    $('foot').textContent = 'Источники: прайсы на сайтах клиник (даты снимков указаны у клиники); Росстат — средние потребительские цены на стоматологию по городу или региону клиники, сентябрь 2026 к сентябрю 2025; ' +
       'Банк России — прогноз от 23.10.2026; Минэкономразвития — осенний макропрогноз 2026.';
     render();
   }).catch(function () { $('kpis').textContent = 'Не удалось загрузить данные.'; });
 })();
 </script>
+<div class="cookie" id="cookie" hidden>Сайт использует cookies и сервисы аналитики Яндекс Метрика, чтобы понимать, какие страницы полезны. <a href="../../konfidencialnost/">Подробнее</a><button id="cookie-ok">Понятно</button></div>
+<script>(function(){var b=document.getElementById('cookie');try{if(localStorage.getItem('cookie-ok'))return;}catch(e){}b.hidden=false;document.getElementById('cookie-ok').onclick=function(){try{localStorage.setItem('cookie-ok','1')}catch(e){}b.hidden=true;};})();</script>
 </body>
 </html>
