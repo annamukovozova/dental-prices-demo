@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /biz/
 
-Sitemap: https://zubindex.ru/sitemap.xml
+Sitemap: https://annamukovozova.github.io/dental-prices-demo/sitemap.xml
