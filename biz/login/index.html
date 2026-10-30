@@ -52,7 +52,7 @@ button { font: inherit; font-weight: 600; color: #fff; background: var(--acc); b
     var err = document.getElementById('err'); err.textContent = '';
     var u = document.getElementById('u').value.trim().toLowerCase(), p = document.getElementById('p').value;
     try {
-      if (OK.indexOf(await sha(u + ':' + p)) >= 0) { store('1'); location.replace(next()); }
+      if (OK.indexOf(await sha(u + ':' + p)) >= 0) { store(String(Date.now())); location.replace(next()); }   // вход живёт сутки
       else err.textContent = 'Неверный логин или пароль.';
     } catch (e) { err.textContent = 'Браузер не смог проверить пароль. Откройте страницу по https.'; }
   };
