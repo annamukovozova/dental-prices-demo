@@ -5,52 +5,267 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Сверка договорного прайса</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-/* Макет сверки договорного прайса с публичным (МЕТОДИКА 18.2): главное — файл не покидает компьютер пользователя. */
-:root { color-scheme: light; --bg: #F4F6F8; --panel: #FFFFFF; --ink: #0A1628; --muted: #4A5868; --line: #D5DDE4; --acc: #1FA89A; --acc-ink: #0E6F66; --soft: #E3F4F1;
-  --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
-@media (prefers-color-scheme: dark) { :root { color-scheme: dark; --bg: #0B1420; --panel: #121E2C; --ink: #E6EDF3; --muted: #9AABBC; --line: #24364A; --acc: #3CC4B5; --acc-ink: #7FE0D4; --soft: #12302D; } }
+/* Сверка договорного прайса с публичным (МЕТОДИКА 18.2, SPEC В15). Файл читается в браузере и никуда не отправляется:
+   публичный прайс клиники берётся из data/<клиника>.json (tools/build_compare.py), сопоставление строк — здесь же.
+   Порядок сопоставления: код услуги Минздрава (804н) → код клиники → одинаковое наименование → похожее наименование (проверить). */
+:root { color-scheme: light; --bg: #F4F6F8; --panel: #FFFFFF; --ink: #0A1628; --muted: #4A5868; --line: #D5DDE4; --acc: #1FA89A; --acc-ink: #0E6F66;
+  --soft: #E3F4F1; --up: #B42318; --up-soft: #FDECEA; --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+@media (prefers-color-scheme: dark) { :root { color-scheme: dark; --bg: #0B1420; --panel: #121E2C; --ink: #E6EDF3; --muted: #9AABBC; --line: #24364A;
+  --acc: #3CC4B5; --acc-ink: #7FE0D4; --soft: #12302D; --up: #F97066; --up-soft: #3A1A18; } }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.55; }
-.wrap { max-width: 860px; margin: 0 auto; padding: 20px 16px 48px; }
-.top { font-size: 13px; color: var(--muted); } .top a { color: inherit; }
-h1 { font-size: clamp(26px, 5vw, 32px); margin: 10px 0 8px; } h2 { font-size: 18px; margin: 0 0 8px; }
-.privacy { background: var(--soft); border-radius: 12px; padding: 16px 18px; margin: 14px 0 18px; font-size: 17px; }
-.privacy b { display: block; font-size: 19px; margin-bottom: 4px; }
-.steps { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); margin-bottom: 18px; }
-.step { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
-.step .n { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--acc); color: #fff; font-weight: 700; margin-bottom: 6px; }
-.step p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
-.drop { border: 2px dashed var(--line); border-radius: 12px; padding: 28px 16px; text-align: center; color: var(--muted); background: var(--panel); margin-bottom: 18px; }
-.drop b { color: var(--ink); }
-.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
-table { width: 100%; border-collapse: collapse; font-size: 14px; } th, td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; } th { color: var(--muted); }
-td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; } .hl { color: #C2410C; font-weight: 600; }
-.tbl { overflow-x: auto; } .muted { color: var(--muted); font-size: 14px; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.5; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 20px 16px 48px; }
+.top { font-size: 14px; color: var(--muted); } .top a, a { color: var(--acc-ink); }
+h1 { font-size: clamp(24px, 5vw, 30px); margin: 10px 0 6px; } h2 { font-size: 18px; margin: 22px 0 8px; }
+.lead { color: var(--muted); margin: 0 0 14px; max-width: 75ch; }
+.privacy { background: var(--soft); border-radius: 12px; padding: 12px 16px; margin: 10px 0 16px; }
+.grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+label { display: grid; gap: 4px; font-size: 14px; color: var(--muted); }
+input, select { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; }
+.drop { border: 2px dashed var(--line); border-radius: 12px; padding: 20px; text-align: center; color: var(--muted); cursor: pointer; }
+.drop.on { border-color: var(--acc); background: var(--soft); }
+.cols { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); margin-top: 10px; }
+.btn { font: inherit; font-weight: 600; background: var(--acc); color: #fff; border: 0; border-radius: 999px; padding: 8px 18px; cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--acc-ink); border: 1px solid var(--acc); }
+.stats { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); margin: 10px 0; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.stat b { display: block; font-size: 24px; font-variant-numeric: tabular-nums; } .stat span { font-size: 13px; color: var(--muted); }
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 8px; }
+.tab { font: inherit; font-size: 14px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.tab[aria-pressed="true"] { background: var(--acc); border-color: var(--acc); color: #fff; }
+.tbl { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; background: var(--panel); font-size: 14px; }
+th, td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; color: var(--muted); }
+td.n { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+tr.up td.d { color: var(--up); font-weight: 700; } tr.up { background: var(--up-soft); }
+.how { font-size: 12px; color: var(--muted); }
+.muted { color: var(--muted); font-size: 14px; }
+.err { color: var(--up); }
 </style>
 <meta name="yandex-verification" content="b676dfc996e8d02c">
 </head>
 <body><div class="wrap">
-<p class="top"><a href="../">← кабинет для бизнеса</a> · макет, в разработке</p>
+<p class="top"><a href="../">← кабинет</a></p>
 <h1>Сверка договорного прайса с публичным</h1>
-<div class="privacy"><b>Ваш файл не покидает компьютер.</b>Сравнение идёт внутри браузера, на наш сервер ничего не отправляется. Публичный прайс клиники страница берёт из нашей базы, это открытые данные. Код страницы открыт: служба безопасности может проверить, что запросов наружу нет. Страницу можно сохранить и открывать без интернета.</div>
-<div class="steps">
-<div class="step"><span class="n">1</span><b>Выберите клинику</b><p>Публичный прайс подтянется из базы с датой и ссылкой на сайт клиники.</p></div>
-<div class="step"><span class="n">2</span><b>Перетащите свой Excel</b><p>Колонки кода, наименования и цены определятся сами. Если нет — один вопрос: «какая колонка цена?».</p></div>
-<div class="step"><span class="n">3</span><b>Получите сверку</b><p>Совпавшие строки, разница в рублях и процентах, строки, где договорная цена выше розничной. Выгрузка в Excel на ваш компьютер.</p></div>
+<p class="lead">Загрузите договорной прайс клиники в Excel или CSV и выберите клинику. Покажем строки, где договорная цена выше цены
+в её публичном прайсе, и общий итог.</p>
+<p><button class="btn ghost" id="demo">Показать на примере</button> <span class="muted">договорной прайс с вымышленными ценами для одной клиники Москвы</span></p>
+<div class="privacy"><b>Файл не покидает ваш компьютер.</b> Он читается в браузере, на сервер ничего не отправляется: со своей стороны
+страница только загружает публичный прайс выбранной клиники.</div>
+
+<div class="grid">
+  <div class="card">
+    <label>1. Клиника<input id="q" list="clinics" placeholder="Начните вводить название" autocomplete="off"></label>
+    <datalist id="clinics"></datalist>
+    <p class="muted" id="pub">Публичный прайс подтянется из базы с датой и ссылкой на сайт клиники.</p>
+  </div>
+  <div class="card">
+    <div class="drop" id="drop">2. Перетащите сюда договорной прайс<br><b>или нажмите, чтобы выбрать файл</b> (.xlsx, .xls, .csv)</div>
+    <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
+    <p class="muted" id="fname"></p>
+  </div>
 </div>
-<div class="drop"><b>Перетащите сюда договорной прайс (Excel или CSV)</b><br>В демо загрузка выключена: страница показывает, как будет устроена сверка.</div>
-<div class="card">
-<h2>Как будет выглядеть результат (пример на вымышленных цифрах)</h2>
-<div class="tbl"><table>
-<thead><tr><th>Услуга</th><th>Как сопоставлено</th><th class="n">Договор, ₽</th><th class="n">Сайт клиники, ₽</th><th class="n">Разница</th></tr></thead>
-<tbody>
-<tr><td>Пломба светового отверждения, 1 поверхность</td><td>код и наименование</td><td class="n">4 200</td><td class="n">4 000</td><td class="n hl">+5,0%</td></tr>
-<tr><td>Анестезия инфильтрационная</td><td>наименование</td><td class="n">900</td><td class="n">1 000</td><td class="n">−10,0%</td></tr>
-<tr><td>Удаление зуба простое</td><td>код совпал, наименование другое — на проверку</td><td class="n">3 500</td><td class="n">—</td><td class="n">—</td></tr>
-<tr><td>Профессиональная гигиена</td><td>нет в публичном прайсе</td><td class="n">7 800</td><td class="n">—</td><td class="n">—</td></tr>
-</tbody></table></div>
-<p class="muted">Итог считается только по сопоставленным строкам: сколько строк совпало, в скольких договорная цена выше розничной, медиана разницы по группам услуг. Если публичный прайс старше 12 месяцев, над результатом будет предупреждение.</p>
+
+<div class="card" id="setup" hidden style="margin-top:12px">
+  <b>3. Проверьте колонки</b> <span class="muted">— определились сами, поправьте, если нужно</span>
+  <div class="cols">
+    <label>Лист<select id="sheet"></select></label>
+    <label>Наименование услуги<select id="c-name"></select></label>
+    <label>Цена<select id="c-price"></select></label>
+    <label>Код услуги (если есть)<select id="c-code"></select></label>
+  </div>
+  <p style="margin:12px 0 0"><button class="btn" id="run">Сверить</button></p>
 </div>
-<div class="card"><h2>Если внешние страницы открывать нельзя</h2><p class="muted" style="margin:0">Скачайте публичный прайс клиники в Excel в стандартных колонках и шаблон сверки с готовыми формулами: вставьте свой прайс на соседний лист, формулы посчитают сами. Скоро.</p></div>
-</div></body></html>
+
+<div id="result" hidden>
+  <h2>Итог</h2>
+  <div class="stats" id="stats"></div>
+  <p class="muted" id="note"></p>
+  <div class="tabs" id="tabs"></div>
+  <div class="tbl"><table id="tbl"></table></div>
+  <p style="margin-top:12px"><button class="btn ghost" id="csv">Скачать результат CSV</button></p>
+</div>
+<p class="muted" id="msg"></p>
+</div>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var el = function (t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+  var rub = function (v) { return Math.round(v).toLocaleString('ru-RU') + ' ₽'; };
+  var pct = function (v) { return (v > 0 ? '+' : '') + (v * 100).toFixed(1).replace('.', ',') + '%'; };
+  var index = [], pub = null, wb = null, rows = [], res = [], view = 'up';
+  var norm = function (s) { return String(s || '').toLowerCase().replace(/ё/g, 'е').replace(/[«»"'().,;:\/\\\-–—№]/g, ' ').replace(/\s+/g, ' ').trim(); };
+  var code = function (s) {   // код Минздрава: А/A, пробелы и точки приводим к одному виду
+    var m = String(s || '').toUpperCase().replace(/А/g, 'A').replace(/В/g, 'B').replace(/\s/g, '').match(/[AB]\d{2}\.\d{2,3}\.\d{3}(\.\d{3})?/);
+    return m ? m[0] : '';
+  };
+  var num = function (v) {
+    if (typeof v === 'number') return v;
+    var s = String(v || '').replace(/\s| |₽|руб\.?/gi, '').replace(',', '.');
+    var x = parseFloat(s); return isNaN(x) ? null : x;
+  };
+  var words = function (s) { return norm(s).split(' ').filter(function (w) { return w.length > 2; }); };
+  function sim(a, b) {   // доля общих слов (Жаккар)
+    var A = {}, n = 0, u = 0; a.forEach(function (w) { A[w] = 1; });
+    var B = {}; b.forEach(function (w) { B[w] = 1; });
+    Object.keys(B).forEach(function (w) { if (A[w]) n++; });
+    u = Object.keys(A).length + Object.keys(B).length - n;
+    return u ? n / u : 0;
+  }
+
+  fetch('data/index.json').then(function (r) { return r.json(); }).then(function (j) {
+    index = j; var dl = $('clinics');
+    j.forEach(function (c) { dl.append(new Option(c.name + ' — ' + c.city)); });
+  }).catch(function () { $('msg').textContent = 'Не удалось загрузить список клиник.'; });
+
+  $('demo').onclick = function () {   // пример: вымышленный договорной прайс к одной клинике (tools/build_compare.py, sample)
+    fetch('data/sample.json').then(function (r) { return r.json(); }).then(function (s) {
+      $('q').value = s.name + ' — ' + s.city;
+      var x = fetch('data/sample.xlsx').then(function (r) { return r.arrayBuffer(); }).then(function (b) {
+        $('fname').textContent = 'Пример: договорной прайс к клинике «' + s.name + '», цены вымышленные';
+        wb = XLSX.read(new Uint8Array(b), { type: 'array' });
+        var sh = $('sheet'); sh.replaceChildren(); wb.SheetNames.forEach(function (n) { sh.append(new Option(n, n)); }); sheet(wb.SheetNames[0]);
+        $('setup').hidden = false;
+      });
+      return Promise.all([loadPub(s.org), x]).then(function () { ready(); $('run').onclick(); });
+    });
+  };
+  $('q').onchange = function () {
+    var v = $('q').value, c = index.filter(function (x) { return x.name + ' — ' + x.city === v; })[0];
+    if (c) loadPub(c.org);
+  };
+  function loadPub(org) {
+    $('pub').textContent = 'Загружаем публичный прайс…';
+    return fetch('data/' + encodeURIComponent(org) + '.json').then(function (r) { return r.json(); }).then(function (j) {
+      pub = j; var p = $('pub'); p.replaceChildren();
+      p.append('Публичный прайс: ' + j.lines.length + ' строк, снимок ' + j.date.split('-').reverse().join('.') + '. ');
+      j.docs.slice(0, 3).forEach(function (u, i) { var a = el('a', '', 'документ ' + (i + 1)); a.href = u; a.target = '_blank'; a.rel = 'noopener'; p.append(a, ' '); });
+      ready();
+    });
+  }
+
+  var drop = $('drop');
+  drop.onclick = function () { $('file').click(); };
+  drop.ondragover = function (e) { e.preventDefault(); drop.classList.add('on'); };
+  drop.ondragleave = function () { drop.classList.remove('on'); };
+  drop.ondrop = function (e) { e.preventDefault(); drop.classList.remove('on'); if (e.dataTransfer.files[0]) read(e.dataTransfer.files[0]); };
+  $('file').onchange = function () { if (this.files[0]) read(this.files[0]); };
+
+  function read(f) {
+    $('fname').textContent = f.name;
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        wb = XLSX.read(new Uint8Array(r.result), { type: 'array' });
+        var s = $('sheet'); s.replaceChildren(); wb.SheetNames.forEach(function (n) { s.append(new Option(n, n)); });
+        s.onchange = function () { sheet(s.value); }; sheet(wb.SheetNames[0]);
+        $('setup').hidden = false; ready();
+      } catch (e) { $('fname').textContent = 'Не удалось прочитать файл: ' + e.message; }
+    };
+    r.readAsArrayBuffer(f);
+  }
+  function sheet(name) {   // строки листа и угадывание колонок
+    rows = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, raw: true, defval: '' });
+    var w = Math.max.apply(null, rows.slice(0, 200).map(function (r) { return r.length; }).concat([1]));
+    var txt = new Array(w).fill(0), nm = new Array(w).fill(0), cd = new Array(w).fill(0);
+    rows.slice(0, 400).forEach(function (r) { for (var i = 0; i < w; i++) {
+      var v = r[i]; if (v === '' || v == null) continue;
+      var s = String(v).trim();
+      if (code(s) && s.length <= 25) cd[i]++;                                   // в ячейке только код
+      else if (num(v) != null && num(v) >= 30 && num(v) < 3e6 && !/[a-zа-я]/i.test(s.replace(/руб|₽/gi, ''))) nm[i]++;
+      else if (s.length > 12 && /[а-я]/i.test(s)) txt[i]++;                     // число строк с текстом, а не длина: заголовок не перевесит
+    } });
+    var best = function (a) { var m = 0; a.forEach(function (x, i) { if (x > a[m]) m = i; }); return a[m] > 0 ? m : -1; };
+    var cName = best(txt), cCode = best(cd);
+    var cPrice = -1;   // цена — числовая колонка правее наименования с наибольшим числом значений
+    nm.forEach(function (x, i) { if (x > 0 && i !== cCode && i > cName && (cPrice < 0 || x > nm[cPrice])) cPrice = i; });
+    if (cPrice < 0) cPrice = best(nm);
+    var head = rows.find(function (r) { return r.filter(function (x) { return String(x).trim(); }).length >= 2; }) || [];
+    ['c-name', 'c-price', 'c-code'].forEach(function (id) {
+      var s = $(id); s.replaceChildren(); if (id === 'c-code') s.append(new Option('— нет —', '-1'));
+      for (var i = 0; i < w; i++) s.append(new Option('Колонка ' + String.fromCharCode(65 + i) + (head[i] ? ': ' + String(head[i]).slice(0, 30) : ''), String(i)));
+    });
+    $('c-name').value = String(cName); $('c-price').value = String(cPrice); $('c-code').value = String(cCode);
+  }
+  function ready() { $('run').disabled = !(pub && wb); $('msg').textContent = pub && wb ? '' : (wb ? 'Выберите клинику.' : ''); }
+
+  $('run').onclick = function () {
+    var ci = +$('c-name').value, pi = +$('c-price').value, ki = +$('c-code').value;
+    var P = pub.lines.map(function (l) { return { name: l[0], code: code(l[1]) || code(l[0]), ccode: String(l[2] || '').trim(), price: l[3], from: l[4], w: words(l[0]), n: norm(l[0]) }; });
+    var byCode = {}, byC = {}, byName = {};
+    P.forEach(function (p) { if (p.code) (byCode[p.code] = byCode[p.code] || []).push(p); if (p.ccode) (byC[p.ccode] = byC[p.ccode] || []).push(p); (byName[p.n] = byName[p.n] || []).push(p); });
+    res = [];
+    rows.forEach(function (r) {
+      var name = String(r[ci] || '').trim(), price = num(r[pi]);
+      if (!name || price == null || price <= 0 || !/[а-яa-z]/i.test(name)) return;
+      var k = ki >= 0 ? code(r[ki]) || '' : '', raw = ki >= 0 ? String(r[ki] || '').trim() : '';
+      k = k || code(name);
+      var cand = null, how = '';
+      // несколько строк публичного прайса с тем же кодом — берём ближайшую по наименованию
+      // одинаково похожих вариантов несколько (филиалы, материалы) — сравниваем с медианой их цен, а не с первым попавшимся
+      var pick = function (list) {
+        var w = words(name), sc = list.map(function (p) { return sim(w, p.w); }), mx = Math.max.apply(null, sc);
+        var top = list.filter(function (p, i) { return sc[i] >= mx - 0.02; });
+        if (top.length === 1) return top[0];
+        var ps = top.map(function (p) { return p.price; }).sort(function (a, b) { return a - b; }), h = ps.length >> 1;
+        var med = ps.length % 2 ? ps[h] : (ps[h - 1] + ps[h]) / 2;
+        return { name: top[0].name, price: med, from: top.some(function (p) { return p.from; }), lo: ps[0], hi: ps[ps.length - 1], k: ps.length };
+      };
+      if (k && byCode[k]) { cand = pick(byCode[k]); how = 'код ' + k; }
+      else if (raw && byC[raw]) { cand = pick(byC[raw]); how = 'код клиники ' + raw; }
+      else if (byName[norm(name)]) { cand = pick(byName[norm(name)]); how = 'то же наименование'; }
+      else {
+        var w = words(name), b = null, s = 0;
+        P.forEach(function (p) { var x = sim(w, p.w); if (x > s) { s = x; b = p; } });
+        if (b && s >= 0.6) { cand = b; how = 'похожее наименование (' + Math.round(s * 100) + '%), проверьте'; }
+      }
+      res.push({ name: name, price: price, pub: cand, how: how, d: cand ? price / cand.price - 1 : null, fuzzy: /похожее/.test(how) });
+    });
+    draw();
+  };
+
+  function draw() {
+    var m = res.filter(function (r) { return r.pub; }), up = m.filter(function (r) { return r.d > 0.005; });
+    var sumC = m.reduce(function (s, r) { return s + r.price; }, 0), sumP = m.reduce(function (s, r) { return s + r.pub.price; }, 0);
+    var st = $('stats'); st.replaceChildren();
+    [[res.length, 'строк в договорном прайсе'], [m.length, 'сопоставлено с публичным'], [up.length, 'строк, где договор дороже'],
+     [sumP ? pct(sumC / sumP - 1) : '—', 'договор к публичному по сопоставленным строкам (сумма цен)']].forEach(function (x) {
+      var d = el('div', 'stat'); d.append(el('b', '', x[0]), el('span', '', x[1])); st.append(d); });
+    $('note').textContent = 'Сопоставлено по коду услуги: ' + m.filter(function (r) { return /^код/.test(r.how); }).length +
+      ', по наименованию: ' + m.filter(function (r) { return r.how === 'то же наименование'; }).length +
+      ', по похожему наименованию (проверьте глазами): ' + m.filter(function (r) { return r.fuzzy; }).length + '. Цены «от» в публичном прайсе помечены.';
+    var tabs = $('tabs'); tabs.replaceChildren();
+    [['up', 'Договор дороже (' + up.length + ')'], ['all', 'Все сопоставленные (' + m.length + ')'], ['none', 'Не нашлись (' + (res.length - m.length) + ')']].forEach(function (t) {
+      var b = el('button', 'tab', t[1]); b.setAttribute('aria-pressed', String(view === t[0])); b.onclick = function () { view = t[0]; draw(); }; tabs.append(b); });
+    var list = view === 'up' ? up : view === 'all' ? m : res.filter(function (r) { return !r.pub; });
+    list = list.slice().sort(function (a, b) { return (b.d || 0) - (a.d || 0); });
+    var t = $('tbl'); t.replaceChildren();
+    var h = el('tr'); ['Договорной прайс', 'Договор', 'Публичный прайс', 'Публично', 'Разница'].forEach(function (x, i) { var th = el('th', i % 2 && i < 4 || i === 4 ? 'n' : '', x); h.append(th); }); t.append(h);
+    list.slice(0, 500).forEach(function (r) {
+      var tr = el('tr', r.d > 0.005 ? 'up' : '');
+      var c2 = el('td'); if (r.pub) { c2.append(r.pub.name); c2.append(el('div', 'how', r.how + (r.pub.k ? '; в публичном прайсе вариантов: ' + r.pub.k + ', от ' + rub(r.pub.lo) + ' до ' + rub(r.pub.hi) + ', взята медиана' : ''))); }
+      tr.append(el('td', '', r.name), el('td', 'n', rub(r.price)), c2, el('td', 'n', r.pub ? (r.pub.from ? 'от ' : '') + rub(r.pub.price) : '—'),
+        el('td', 'n d', r.pub ? pct(r.d) : ''));
+      t.append(tr);
+    });
+    $('result').hidden = false;
+  }
+
+  $('csv').onclick = function () {
+    var q = function (s) { return '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"'; };
+    var lines = ['Договорной прайс;Договор, ₽;Публичный прайс;Публично, ₽;«от»;Разница, %;Как сопоставлено'];
+    res.forEach(function (r) { lines.push([q(r.name), r.price, q(r.pub ? r.pub.name : ''), r.pub ? r.pub.price : '', r.pub && r.pub.from ? 'от' : '',
+      r.pub ? (r.d * 100).toFixed(1).replace('.', ',') : '', q(r.how)].join(';')); });
+    var a = el('a'); a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8' }));
+    a.download = 'сверка_' + (pub ? pub.org : '') + '.csv'; a.click();
+  };
+  ready();
+  if (/[?&]demo=1/.test(location.search)) $('demo').onclick();   // ссылка сразу на пример
+})();
+</script>
+</body></html>
