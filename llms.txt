@@ -2,18 +2,22 @@
 
 > Цены стоматологий из прайсов, которые клиники публикуют на своих сайтах. Строки прайса сложены в типовые случаи лечения, чтобы клиники можно было сравнивать: пломба визитом целиком (осмотр, анестезия, пломба), лечение каналов, коронка, имплант под ключ (установка, абатмент, коронка), удаление, съёмный протез, брекеты, гигиена и отбеливание.
 
-Снимок прайсов: до 2026-10-30. Городов: 12, клиник с ценами: 422. Если в прайсе несколько вариантов услуги, берётся медиана вариантов, а не самый дешёвый. Медиана по городу — от 5 клиник, сеть клиник считается одной клиникой. Цена из публичного прайса не оферта: итог зависит от осмотра и плана лечения.
+Снимок прайсов: до 2026-10-30. Городов: 16, клиник с ценами: 457. Если в прайсе несколько вариантов услуги, берётся медиана вариантов, а не самый дешёвый. Медиана по городу — от 5 клиник, сеть клиник считается одной клиникой. Цена из публичного прайса не оферта: итог зависит от осмотра и плана лечения.
 
 Москва, медианы: небольшая пломба 6 500 ₽, визит целиком с пломбой 8 150 ₽, лечение каналов зуба с одним каналом 6 350 ₽, коронка металлокерамика 20 000 ₽, цирконий 35 000 ₽, имплант под ключ корейский 77 080 ₽, премиальный 117 000 ₽.
 
 ## Цены по городам и услугам
 
+- [Лечение зубов в Волгограде](https://zubindex.ru/volgograd/)
 - [Лечение зубов в Калининграде](https://zubindex.ru/kaliningrad/)
 - [Лечение зубов в Екатеринбурге](https://zubindex.ru/ekaterinburg/)
+- [Лечение зубов в Перми](https://zubindex.ru/perm/)
 - [Лечение зубов в Челябинске](https://zubindex.ru/chelyabinsk/)
 - [Лечение зубов в Краснодаре](https://zubindex.ru/krasnodar/)
 - [Лечение зубов в Самаре](https://zubindex.ru/samara/)
+- [Лечение зубов в Воронеже](https://zubindex.ru/voronezh/)
 - [Лечение зубов в Казани](https://zubindex.ru/kazan/)
+- [Лечение зубов в Омске](https://zubindex.ru/omsk/)
 - [Лечение зубов в Новосибирске](https://zubindex.ru/novosibirsk/)
 - [Лечение зубов в Красноярске](https://zubindex.ru/krasnoyarsk/)
 - [Лечение зубов в Уфе](https://zubindex.ru/ufa/)
@@ -68,6 +72,14 @@
 - [Полный съёмный протез в Новосибирске](https://zubindex.ru/novosibirsk/semnyj-protez/)
 - [Брекеты в Новосибирске](https://zubindex.ru/novosibirsk/brekety/)
 - [Профессиональная чистка и отбеливание зубов в Новосибирске](https://zubindex.ru/novosibirsk/chistka-i-otbelivanie/)
+- [Пломба в Омске](https://zubindex.ru/omsk/plomba/)
+- [Лечение каналов зуба в Омске](https://zubindex.ru/omsk/lechenie-kanalov/)
+- [Коронка на зуб в Омске](https://zubindex.ru/omsk/koronka/)
+- [Имплант под ключ в Омске](https://zubindex.ru/omsk/implant-pod-klyuch/)
+- [Удаление зуба в Омске](https://zubindex.ru/omsk/udalenie-zuba/)
+- [Полный съёмный протез в Омске](https://zubindex.ru/omsk/semnyj-protez/)
+- [Брекеты в Омске](https://zubindex.ru/omsk/brekety/)
+- [Профессиональная чистка и отбеливание зубов в Омске](https://zubindex.ru/omsk/chistka-i-otbelivanie/)
 - [Пломба в Казани](https://zubindex.ru/kazan/plomba/)
 - [Лечение каналов зуба в Казани](https://zubindex.ru/kazan/lechenie-kanalov/)
 - [Коронка на зуб в Казани](https://zubindex.ru/kazan/koronka/)
@@ -76,6 +88,14 @@
 - [Полный съёмный протез в Казани](https://zubindex.ru/kazan/semnyj-protez/)
 - [Брекеты в Казани](https://zubindex.ru/kazan/brekety/)
 - [Профессиональная чистка и отбеливание зубов в Казани](https://zubindex.ru/kazan/chistka-i-otbelivanie/)
+- [Пломба в Воронеже](https://zubindex.ru/voronezh/plomba/)
+- [Лечение каналов зуба в Воронеже](https://zubindex.ru/voronezh/lechenie-kanalov/)
+- [Коронка на зуб в Воронеже](https://zubindex.ru/voronezh/koronka/)
+- [Имплант под ключ в Воронеже](https://zubindex.ru/voronezh/implant-pod-klyuch/)
+- [Удаление зуба в Воронеже](https://zubindex.ru/voronezh/udalenie-zuba/)
+- [Полный съёмный протез в Воронеже](https://zubindex.ru/voronezh/semnyj-protez/)
+- [Брекеты в Воронеже](https://zubindex.ru/voronezh/brekety/)
+- [Профессиональная чистка и отбеливание зубов в Воронеже](https://zubindex.ru/voronezh/chistka-i-otbelivanie/)
 - [Пломба в Самаре](https://zubindex.ru/samara/plomba/)
 - [Лечение каналов зуба в Самаре](https://zubindex.ru/samara/lechenie-kanalov/)
 - [Коронка на зуб в Самаре](https://zubindex.ru/samara/koronka/)
@@ -100,6 +120,14 @@
 - [Полный съёмный протез в Челябинске](https://zubindex.ru/chelyabinsk/semnyj-protez/)
 - [Брекеты в Челябинске](https://zubindex.ru/chelyabinsk/brekety/)
 - [Профессиональная чистка и отбеливание зубов в Челябинске](https://zubindex.ru/chelyabinsk/chistka-i-otbelivanie/)
+- [Пломба в Перми](https://zubindex.ru/perm/plomba/)
+- [Лечение каналов зуба в Перми](https://zubindex.ru/perm/lechenie-kanalov/)
+- [Коронка на зуб в Перми](https://zubindex.ru/perm/koronka/)
+- [Имплант под ключ в Перми](https://zubindex.ru/perm/implant-pod-klyuch/)
+- [Удаление зуба в Перми](https://zubindex.ru/perm/udalenie-zuba/)
+- [Полный съёмный протез в Перми](https://zubindex.ru/perm/semnyj-protez/)
+- [Брекеты в Перми](https://zubindex.ru/perm/brekety/)
+- [Профессиональная чистка и отбеливание зубов в Перми](https://zubindex.ru/perm/chistka-i-otbelivanie/)
 - [Пломба в Екатеринбурге](https://zubindex.ru/ekaterinburg/plomba/)
 - [Лечение каналов зуба в Екатеринбурге](https://zubindex.ru/ekaterinburg/lechenie-kanalov/)
 - [Коронка на зуб в Екатеринбурге](https://zubindex.ru/ekaterinburg/koronka/)
@@ -116,6 +144,14 @@
 - [Полный съёмный протез в Калининграде](https://zubindex.ru/kaliningrad/semnyj-protez/)
 - [Брекеты в Калининграде](https://zubindex.ru/kaliningrad/brekety/)
 - [Профессиональная чистка и отбеливание зубов в Калининграде](https://zubindex.ru/kaliningrad/chistka-i-otbelivanie/)
+- [Пломба в Волгограде](https://zubindex.ru/volgograd/plomba/)
+- [Лечение каналов зуба в Волгограде](https://zubindex.ru/volgograd/lechenie-kanalov/)
+- [Коронка на зуб в Волгограде](https://zubindex.ru/volgograd/koronka/)
+- [Имплант под ключ в Волгограде](https://zubindex.ru/volgograd/implant-pod-klyuch/)
+- [Удаление зуба в Волгограде](https://zubindex.ru/volgograd/udalenie-zuba/)
+- [Полный съёмный протез в Волгограде](https://zubindex.ru/volgograd/semnyj-protez/)
+- [Брекеты в Волгограде](https://zubindex.ru/volgograd/brekety/)
+- [Профессиональная чистка и отбеливание зубов в Волгограде](https://zubindex.ru/volgograd/chistka-i-otbelivanie/)
 
 ## Для страховщиков, брокеров и клиник
 
