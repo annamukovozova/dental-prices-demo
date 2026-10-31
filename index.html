@@ -396,7 +396,7 @@ select, input[type=search] { font: inherit; color: var(--ink); background: var(-
     sel.value = state.city;
     sel.onchange = function () { loadCity(sel.value); };
     $('q').oninput = function () { state.q = norm($('q').value); render(); };
-    $('foot').textContent = 'Розничные цены из прайсов на сайтах клиник, снимок до ' + date(j.built) + '. Оценку показывает Яндекс, мы её не храним.';
+    $('foot').textContent = 'Розничные цены из прайсов на сайтах клиник, снимок до ' + date(j.built) + '. Оценку показывает Яндекс, мы её не храним. Станции метро — © участники OpenStreetMap.';
     loadCity(state.city);
   }).catch(function () { $('summary').textContent = 'Не удалось загрузить данные.'; });
 })();
